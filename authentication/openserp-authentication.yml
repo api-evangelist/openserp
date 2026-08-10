@@ -1,0 +1,73 @@
+generated: '2026-08-10'
+method: searched
+source: https://openserp.org/docs/cloud-authentication/
+docs: https://openserp.org/docs/cloud-authentication/
+note: derive-authentication.py returned no schemes because the published OSS OpenAPI declares no
+  `securitySchemes` — the self-hosted server is deliberately unauthenticated. The Cloud auth model
+  below was read from the provider's documentation and confirmed against live 401 responses.
+summary:
+  types: [http]
+  http_schemes: [bearer]
+  api_key_in: [header]
+  oauth2_flows: []
+  openid_connect: false
+  mutual_tls: false
+schemes:
+- name: cloudBearerToken
+  type: http
+  scheme: bearer
+  in: header
+  header: Authorization
+  format: "Bearer <api key>"
+  token_prefix: osk_live_
+  applies_to: https://api.openserp.org
+  sources: [https://openserp.org/docs/cloud-authentication/]
+  description: OpenSERP Cloud API key issued from the dashboard API keys page. The full secret is
+    shown once at creation; a safe-to-log prefix is retained for identification.
+  scopes: none
+  note: Keys are account-wide. The documentation describes no per-key scopes, permissions or
+    restrictions, so there is no scope surface to capture (scopes/ is intentionally absent).
+- name: none
+  type: none
+  applies_to: http://localhost:7000
+  sources: [openapi/openserp-oss-openapi.yml]
+  description: 'The self-hosted OpenSERP server requires no credentials. The OpenAPI declares an
+    empty top-level `security: []` and no `components.securitySchemes`.'
+key_management:
+  issuance: https://openserp.org/dashboard/keys
+  visibility: full secret shown once at creation
+  environment_variable: OPENSERP_API_KEY
+  rotation:
+    documented: true
+    procedure:
+    - Create a new key in the dashboard.
+    - Update the OPENSERP_API_KEY environment variable.
+    - Deploy and verify with client.me() (GET /v1/me).
+    - Revoke the old key.
+    note: Overlapping validity is explicitly recommended so in-flight requests do not fail.
+  revocation: dashboard
+  validation_endpoint:
+    operation: GET /v1/me
+    cost: 0 credits
+    description: Validates a key and returns account details and credit balance. Documented as the
+      deployment smoke test.
+  test_vs_live: single live key class (`osk_live_`). No separate test/sandbox key prefix is
+    documented.
+failure_modes:
+- status: 401
+  error: unauthorized
+  body: '{"error": "unauthorized", "code": 401, "message": "missing or invalid API key"}'
+  causes: [missing key, wrong key, revoked key]
+  retryable: false
+x-evidence:
+  fetched: '2026-08-10'
+  checks:
+  - url: https://openserp.org/docs/cloud-authentication/
+    http_status: 200
+  - url: https://api.openserp.org/v1/me
+    http_status: 401
+    note: Anonymous request returned the documented envelope verbatim -
+      {"error":"unauthorized","code":401,"message":"missing or invalid api key"}
+  - url: https://api.openserp.org/v1/pricing
+    http_status: 200
+    note: The one Cloud operation that answers anonymously.

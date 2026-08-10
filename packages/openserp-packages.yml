@@ -1,0 +1,85 @@
+generated: '2026-08-10'
+method: searched
+source: npm registry, PyPI, Docker Hub, pkg.go.dev, github.com/openserpapi, github.com/karust/openserp
+packages:
+- language: javascript
+  registry: npm
+  name: "@openserp/sdk"
+  url: https://www.npmjs.com/package/@openserp/sdk
+  install: npm install @openserp/sdk
+  repository: https://github.com/openserpapi/sdk-js
+  description: TypeScript/JavaScript SDK for the OpenSERP self-hosted server and OpenSERP Cloud.
+  official: true
+- language: python
+  registry: pypi
+  name: openserp
+  version: 0.2.6
+  url: https://pypi.org/project/openserp/
+  install: pip install openserp
+  repository: https://github.com/openserpapi/sdk-python
+  description: Python SDK for the OpenSERP self-hosted server and OpenSERP Cloud.
+  official: true
+- language: javascript
+  registry: npm
+  name: "@openserp/mcp"
+  version: 0.1.7
+  url: https://www.npmjs.com/package/@openserp/mcp
+  install: npx -y @openserp/mcp
+  repository: https://github.com/openserpapi/mcp
+  description: Model Context Protocol server for OpenSERP OSS and OpenSERP Cloud.
+  kind: mcp-server
+  official: true
+- language: javascript
+  registry: npm
+  name: "@openserp/n8n-nodes-openserp"
+  url: https://www.npmjs.com/package/@openserp/n8n-nodes-openserp
+  install: n8n Settings -> Community Nodes -> Install -> @openserp/n8n-nodes-openserp
+  repository: https://github.com/openserpapi/n8n
+  description: n8n community node for OpenSERP search, image search, URL extraction and Cloud account
+    operations.
+  kind: workflow-node
+  official: true
+- language: go
+  registry: go-modules
+  name: github.com/karust/openserp
+  url: https://pkg.go.dev/github.com/karust/openserp
+  install: go install github.com/karust/openserp@latest
+  repository: https://github.com/karust/openserp
+  description: The MIT-licensed OpenSERP server and CLI, importable as a Go module.
+  kind: server-and-cli
+  official: true
+- language: n/a
+  registry: docker-hub
+  name: karust/openserp
+  url: https://hub.docker.com/r/karust/openserp
+  install: docker run --rm -p 127.0.0.1:7000:7000 karust/openserp:latest
+  description: Official container image for the self-hosted OpenSERP server. 17,600+ pulls,
+    last updated 2026-07-22.
+  kind: container-image
+  official: true
+third_party:
+- language: javascript
+  registry: npm
+  name: n8n-nodes-openserp
+  url: https://www.npmjs.com/package/n8n-nodes-openserp
+  repository: https://github.com/sergeevgit1/openserp
+  description: Community n8n nodes for OpenSERP search engine integration. Published from a
+    third-party account, not the openserpapi organization.
+  official: false
+not_found:
+- registry: maven-central
+- registry: nuget
+- registry: rubygems
+- registry: packagist
+- registry: crates.io
+x-evidence:
+  fetched: '2026-08-10'
+  checks:
+  - url: https://registry.npmjs.org/-/v1/search?text=openserp
+    status: 200
+  - url: https://pypi.org/pypi/openserp/json
+    status: 200
+  - url: https://hub.docker.com/v2/repositories/karust/openserp/
+    status: 200
+  - url: https://api.github.com/orgs/openserpapi/repos
+    status: 200

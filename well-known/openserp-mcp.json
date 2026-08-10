@@ -1,0 +1,49 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json",
+  "version": "1.0",
+  "protocolVersion": "2025-06-18",
+  "serverInfo": {
+    "name": "@openserp/mcp",
+    "title": "OpenSERP MCP Server",
+    "version": "0.1.7"
+  },
+  "description": "Model Context Protocol server for OpenSERP OSS and OpenSERP Cloud. It exposes live SERP search, multi-engine search, image search, single and batch URL extraction, usage, and engine-listing tools.",
+  "iconUrl": "https://openserp.org/icon.svg",
+  "documentationUrl": "https://openserp.org/docs/cloud-examples/#mcp-server",
+  "transport": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "@openserp/mcp"]
+  },
+  "capabilities": {
+    "tools": {}
+  },
+  "instructions": "Run `npx -y @openserp/mcp` for local OSS mode, or set OPENSERP_API_KEY to use OpenSERP Cloud. API keys are created in the OpenSERP dashboard.",
+  "resources": ["dynamic"],
+  "tools": ["dynamic"],
+  "prompts": [],
+  "_meta": {
+    "com.openserp.package": {
+      "registry": "npm",
+      "name": "@openserp/mcp",
+      "installCommand": "npx -y @openserp/mcp"
+    },
+    "com.openserp.environment": [
+      {
+        "name": "OPENSERP_API_KEY",
+        "required": false,
+        "description": "Cloud API key. When omitted, the server uses OSS mode at http://localhost:7000."
+      },
+      {
+        "name": "OPENSERP_BASE_URL",
+        "required": false,
+        "description": "Override API base URL for a compatible OpenSERP deployment."
+      }
+    ],
+    "com.openserp.localHttp": {
+      "command": "npx -y @openserp/mcp --http --host 127.0.0.1 --port 3333",
+      "streamableHttpEndpoint": "http://127.0.0.1:3333/mcp",
+      "sseEndpoint": "http://127.0.0.1:3333/sse"
+    }
+  }
+}

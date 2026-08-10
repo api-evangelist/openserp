@@ -1,0 +1,76 @@
+generated: '2026-08-10'
+method: searched
+source: https://openserp.org/docs/cloud-endpoints/, https://github.com/karust/openserp/releases,
+  openapi/openserp-oss-openapi.yml
+versioning:
+  cloud:
+    scheme: uri-path
+    current: v1
+    base_url: https://api.openserp.org/v1
+    docs: https://openserp.org/docs/cloud-endpoints/
+  oss:
+    scheme: semver-release
+    current: v0.8.12
+    released: '2026-07-22'
+    docs: https://github.com/karust/openserp/releases
+  response_envelope:
+    scheme: envelope-field
+    current: '2.2'
+    note: The OpenAPI info.version is 2.2.0 and `meta.version` carries the envelope version, so a
+      client can detect the response contract independently of the URI version.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  note: 'No deprecation or sunset policy is published on the site or in the docs, and the OpenAPI
+    declares no `deprecated: true` operations. This is a gap the provider can close.'
+deprecated_operations: []
+sla:
+  url: null
+  uptime_target: null
+  note: No SLA or uptime commitment is published. Cloud is pay-as-you-go with no subscription, so
+    there is no contracted availability tier.
+status_page:
+  public: false
+  advertised_url: https://openserp.org/dashboard/status
+  advertised_in: https://openserp.org/.well-known/api-catalog
+  observed_status: 200
+  observed_reality: soft-404 / auth-gated
+  note: The provider's own /.well-known/api-catalog names https://openserp.org/dashboard/status as
+    its `status` link, but an anonymous GET returns the Nuxt not-found shell — byte-identical
+    (192,570 bytes) to the response for an invented path, differing only in a prerender timestamp.
+    llms.txt confirms /dashboard/* is excluded from indexing and requires authentication. There is
+    therefore NO public status page, and no StatusPage pointer is emitted. Engine health is
+    reachable only through the authenticated GET /v1/engines/status, or, on a self-hosted
+    deployment, the unauthenticated GET /health, GET /ready and GET /mega/engines operations.
+support:
+  email: support@openserp.org
+  feedback: hello@openserp.org
+  legal: legal@openserp.org
+  privacy: privacy@openserp.org
+  community: https://t.me/openserp_cloud
+  issues: https://github.com/karust/openserp/issues
+maturity:
+  oss:
+    status: generally available
+    license: MIT
+    first_release_observed: '2025-08-18'
+    stars: 1246
+  cloud:
+    status: generally available
+    note: Described as available now, pay-as-you-go credits, no subscription and no monthly minimum.
+      A founder discount on top-ups is still advertised, which reads as an early commercial phase.
+x-evidence:
+  fetched: '2026-08-10'
+  checks:
+  - url: https://openserp.org/dashboard/status
+    http_status: 200
+    note: Body identical to the 404 shell; not a public status page.
+  - url: https://openserp.org/this-path-should-not-exist-xyz123/
+    http_status: 404
+    note: Negative control establishing the shell.
+  - url: https://openserp.org/changelog/
+    http_status: 404
+  - url: https://api.github.com/repos/karust/openserp/releases
+    http_status: 200

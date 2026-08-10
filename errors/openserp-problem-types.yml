@@ -1,0 +1,151 @@
+generated: '2026-08-10'
+method: searched
+source: https://openserp.org/docs/cloud-errors/
+derived_from: openapi/openserp-oss-openapi.yml
+format: custom-json
+envelope:
+  shape: '{"error": "<code>", "code": <http status>, "message": "<human text>", "reason":
+    "<optional detail tag>"}'
+  media_type: application/json
+  rfc9457: false
+  note: OpenSERP does not use application/problem+json. `error` is the stable machine-readable
+    class, `code` mirrors the HTTP status, `message` is human text, and `reason` is an optional
+    upper-case validation detail tag. Search-pipeline failures additionally carry a sanitized
+    `meta` object (engine, engine_errors[]) that never includes credentials.
+retry_policy:
+  retryable: [408, 429, 500, 502, 503]
+  not_retryable: [400, 401, 402, 404, 422]
+  strategy: exponential backoff with jitter, capped attempts; honour Retry-After on 429.
+  source: https://openserp.org/docs/cloud-errors/
+problems:
+- status: 400
+  code: bad_request
+  title: Missing or invalid query parameters
+  charged: false
+  retryable: false
+  surface: cloud+oss
+  source_operation: openapi/openserp-oss-openapi.yml#searchWeb
+- status: 401
+  code: unauthorized
+  title: Missing, wrong, or revoked API key
+  message: missing or invalid API key
+  charged: false
+  retryable: false
+  surface: cloud
+  remediation: Create or rotate a key at the dashboard and validate with GET /v1/me.
+- status: 402
+  code: insufficient_credits
+  title: Credit balance is too low
+  charged: false
+  retryable: after top-up
+  surface: cloud
+  remediation: Top up credits, then retry.
+- status: 403
+  code: blocked
+  title: Engine blocked the request
+  charged: false
+  retryable: false
+  surface: oss
+  source_operation: openapi/openserp-oss-openapi.yml#searchWeb
+- status: 404
+  code: not_found
+  title: Unknown engine or path
+  charged: false
+  retryable: false
+  surface: cloud+oss
+- status: 408
+  code: timeout
+  title: Search took too long
+  charged: false
+  retryable: true
+  surface: cloud
+- status: 422
+  code: unprocessable
+  title: Parameter values cannot be used together
+  charged: false
+  retryable: false
+  surface: cloud
+- status: 429
+  code: rate_limited
+  title: Per-key rate limit exceeded
+  charged: false
+  retryable: true
+  remediation: Honour the Retry-After header (seconds) before retrying.
+  surface: cloud+oss
+  source_operation: openapi/openserp-oss-openapi.yml#searchWeb
+- status: 500
+  code: internal_error
+  title: Server error
+  charged: false
+  retryable: true
+  surface: cloud
+- status: 500
+  code: server_error
+  title: Server error
+  charged: false
+  retryable: true
+  surface: oss
+- status: 502
+  code: service_unavailable
+  title: Engine request failed upstream
+  charged: false
+  retryable: true
+  surface: cloud+oss
+- status: 503
+  code: service_unavailable
+  title: Service or engine unavailable
+  charged: false
+  retryable: true
+  surface: cloud+oss
+- status: 504
+  code: search_timeout
+  title: Upstream engine timed out
+  charged: false
+  retryable: true
+  surface: oss
+  source_operation: openapi/openserp-oss-openapi.yml#megaSearch
+search_pipeline_error_classes:
+  note: Enumerated in the OpenAPI ErrorResponse schema for search routes on the self-hosted server.
+  source: openapi/openserp-oss-openapi.yml#/components/schemas/ErrorResponse
+  codes:
+  - captcha_detected
+  - blocked
+  - search_timeout
+  - proxy_connect
+  - proxy_auth
+  - proxy_timeout
+  - proxy_unavailable
+  - parser_failure
+  - engine_internal
+  - all_engines_failed
+  - circuit_open
+  - request_timeout
+  - request_canceled
+generic_error_classes:
+  source: openapi/openserp-oss-openapi.yml#/components/schemas/ErrorResponse
+  codes: [bad_request, not_found, rate_limited, service_unavailable, server_error, client_error,
+    error]
+validation_reason_tags:
+  note: Returned in the optional `reason` field on 400 responses.
+  source: https://openserp.org/docs/cloud-errors/
+  tags:
+  - tag: EMPTY_QUERY
+    meaning: The text parameter is missing.
+  - tag: INVALID_LIMIT
+    meaning: limit is outside the 1-100 range.
+  - tag: INVALID_DATE_RANGE
+    meaning: The date interval is malformed or logically inverted.
+  - tag: UNKNOWN_ENGINE
+    meaning: The engine alias is not supported.
+  - tag: UNKNOWN_LANG
+    meaning: The language code is not supported.
+  - tag: UNKNOWN_COUNTRY
+    meaning: The country/region code is not supported.
+x-evidence:
+  fetched: '2026-08-10'
+  checks:
+  - url: https://openserp.org/docs/cloud-errors/
+    http_status: 200
+  - url: https://api.openserp.org/v1/me
+    http_status: 401
+    observed_body: '{"error":"unauthorized","code":401,"message":"missing or invalid api key"}'

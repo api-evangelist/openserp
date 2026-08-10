@@ -1,0 +1,164 @@
+generated: '2026-08-10'
+method: derived
+source: openapi/openserp-oss-openapi.yml
+summary: 'OpenSERP has no persisted resource model — there are no customers, records or mutable
+  objects to CRUD. Its data model is a response composition graph: three envelopes assembled from a
+  shared set of value objects. This ERD therefore describes containment (has_one / has_many),
+  not stored relations, and there are no id-reference foreign keys between entities.'
+schema_count: 45
+root_entities:
+- SearchEnvelope
+- MegaSearchEnvelope
+- ImageEnvelope
+- ExtractResult
+- StatsResponse
+- MegaEnginesResponse
+- ErrorResponse
+entities:
+- name: SearchEnvelope
+  description: The v2 web-search response returned by every single-engine search operation.
+  returned_by: [searchWeb, parseGoogleHTML, parseBingHTML]
+  relationships:
+  - has_one: QueryEcho
+    via: query
+  - has_one: ResponseMeta
+    via: meta
+  - has_many: Result
+    via: results
+  - has_many: SerpFeature
+    via: serp_features
+  - has_one: Pagination
+    via: pagination
+- name: MegaSearchEnvelope
+  description: SearchEnvelope plus cross-engine clustering. Returned only by /mega/search.
+  returned_by: [megaSearch]
+  relationships:
+  - extends: SearchEnvelope
+    via: allOf
+  - has_many: Cluster
+    via: clusters
+    note: Absent (not null) on single-engine endpoints.
+- name: ImageEnvelope
+  description: The image-search response.
+  returned_by: [searchImages, megaImageSearch]
+  relationships:
+  - has_one: QueryEcho
+    via: query
+  - has_one: ResponseMeta
+    via: meta
+  - has_many: ImageResult
+    via: results
+  - has_one: Pagination
+    via: pagination
+- name: Result
+  description: One normalized organic or non-organic web result.
+  identifier:
+    field: id
+    prefix: s_
+    example: s_a1b2c3d4e5f6a1b2
+    note: Content-derived, stable within a response; not a durable server-side key.
+  ordering_fields: [rank, position.absolute]
+  relationships:
+  - has_one: ResultType
+    via: type
+  - has_one: Position
+    via: position
+  - has_one: DomainInfo
+    via: domain_info
+  - has_one: Classification
+    via: classification
+  - has_one: ExtractedContent
+    via: extracted
+    note: Populated only when the `extract` parameter is set; this is OpenSERP's substitute for
+      field expansion.
+- name: ImageResult
+  relationships:
+  - has_one: ImageData
+    via: image
+  - has_one: ImageSource
+    via: source
+- name: Cluster
+  description: A page seen across multiple engines, keyed by canonical URL.
+  identifier:
+    field: id
+    example: cross-engine cluster id
+  key_field: canonical_url
+  scoring_fields: [engines_count, best_rank, score]
+  relationships:
+  - has_many: ClusterOccurrence
+    via: occurrences
+    note: Each occurrence records where the same canonical_url ranked on one engine. This is the
+      one genuine cross-entity join in the model.
+- name: SerpFeature
+  description: A rich SERP element (AI summary, answer box, and similar).
+  identifier:
+    field: id
+    prefix: f_
+    example: f_a1b2c3d4e5f6a1b2
+  relationships:
+  - has_one: ResultType
+    via: type
+  - has_many: FeatureItem
+    via: items
+  - has_many: FeatureLink
+    via: links
+  - has_one: Position
+    via: position
+- name: ExtractResult
+  description: Cleaned, LLM-ready content extracted from one URL.
+  returned_by: [extractURL, extractURLPost]
+  key_field: url
+  content_fields: [markdown, text, canonical, lang, schema_org, og_tags]
+  relationships:
+  - has_many: ExtractHeading
+    via: headings
+  - has_many: ExtractLink
+    via: links
+  - has_one: ExtractMeta
+    via: meta
+- name: ResponseMeta
+  description: Per-request metadata. Carries request_id, requested_at, took_ms and the envelope
+    version.
+  relationships:
+  - has_many: EngineErrorDetail
+    via: engine_errors
+    note: Partial-failure channel — a mega search can return 200 with results from the engines that
+      succeeded plus a per-engine error list here.
+- name: QueryEcho
+  description: The interpreted request echoed back (text, lang, region, engines_requested).
+- name: Pagination
+  fields: [page, has_more, next_start]
+  note: '`next_start` is the value to pass as the `start` parameter on the following request.'
+- name: BatchExtractRequest
+  description: Request body for POST /extract/batch. Up to 20 URLs.
+  returned_by: []
+- name: BatchExtractItem
+  description: One per-URL outcome inside a batch extraction response. A failed URL returns an item
+    with an error rather than failing the batch.
+- name: StatsResponse
+  description: Self-hosted runtime telemetry.
+  returned_by: [getStats]
+  relationships:
+  - has_one: CacheStats
+    via: cache
+  - has_one: ProxyStats
+    via: proxy
+  - has_many: CircuitBreakerStat
+    via: circuit_breakers
+- name: MegaEnginesResponse
+  returned_by: [listMegaEngines]
+  relationships:
+  - has_many: MegaEngineInfo
+    via: engines
+- name: ErrorResponse
+  description: The error envelope. See errors/openserp-problem-types.yml.
+  relationships:
+  - has_many: EngineErrorDetail
+    via: meta.engine_errors
+notes:
+- No entity holds a foreign key to another entity; every relationship is embedded composition.
+- There is no create/update/delete surface anywhere in the API, which is why the agentic-access
+  classification comes out overwhelmingly read-shaped.
+- Cloud adds an account entity reachable through GET /v1/me (balance, plan), but it is not present
+  in any published machine-readable schema.
+render: null

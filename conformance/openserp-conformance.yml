@@ -1,0 +1,92 @@
+generated: '2026-08-10'
+method: derived
+source: openapi/openserp-oss-openapi.yml, https://openserp.org/docs/cloud-errors/,
+  https://openserp.org/.well-known/api-catalog, https://openserp.org/robots.txt
+note: No compliance certifications (SOC 2, ISO 27001, PCI DSS, HIPAA, FedRAMP) are claimed anywhere
+  on openserp.org, and no trust centre exists. This file asserts only cross-cutting technical
+  standards that were directly observed. No `Compliance` pointer is emitted.
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: 'openapi/openserp-oss-openapi.yml declares `openapi: 3.0.3`, 18 operations, 45 component
+    schemas, and is served by the running server at GET /openapi.yaml.'
+- id: rfc9727-api-catalog
+  conforms: true
+  evidence: https://openserp.org/.well-known/api-catalog returns HTTP 200 with content-type
+    application/linkset+json and a valid two-anchor linkset.
+- id: mcp
+  conforms: true
+  version: '2025-06-18'
+  evidence: https://openserp.org/.well-known/mcp.json validates against
+    https://static.modelcontextprotocol.io/schemas/mcp-server-card/v1.json and the published
+    "@openserp/mcp" server registers 10 tools.
+- id: llmstxt
+  conforms: true
+  evidence: https://openserp.org/llms.txt returns HTTP 200, text/plain, in llms.txt format with
+    H1, summary and sectioned link lists, plus an /llms-full.txt companion.
+- id: content-signal
+  conforms: true
+  evidence: 'https://openserp.org/robots.txt carries `Content-Signal: ai-train=yes, search=yes,
+    ai-input=yes` plus explicit GPTBot and OAI-SearchBot allow rules.'
+- id: bearer-token-rfc6750
+  conforms: true
+  evidence: 'OpenSERP Cloud authenticates with `Authorization: Bearer <osk_live_...>`.'
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returns HTTP 404 on both openserp.org and api.openserp.org.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: Errors use a bespoke JSON object ({error, code, message, reason}) served as
+    application/json, not application/problem+json with type/title/status/detail.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation header support and no deprecation policy is published.
+- id: oauth2
+  conforms: false
+  evidence: No oauth2 securityScheme in the OpenAPI and no OAuth documentation; Cloud uses a static
+    bearer API key.
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returns HTTP 404 on both hosts.
+- id: asyncapi
+  conforms: false
+  evidence: No AsyncAPI document published; the Search Monitor webhook is documented in HTML only.
+- id: json-api
+  conforms: false
+  evidence: Responses use a bespoke v2 envelope (query/meta/results/pagination), not the JSON:API
+    media type or document structure.
+- id: a2a
+  conforms: false
+  evidence: /.well-known/agent-card.json and /.well-known/agent.json both return HTTP 404 on
+    openserp.org and api.openserp.org.
+- id: rate-limit-headers-draft
+  conforms: partial
+  evidence: 429 responses carry Retry-After, but no RateLimit-Limit / RateLimit-Remaining /
+    RateLimit-Reset headers are documented and no numeric quota is published.
+- id: idempotency-key-draft
+  conforms: false
+  evidence: No Idempotency-Key header or parameter anywhere in the spec or docs. See
+    conventions/openserp-conventions.yml for why this is defensible for a read-oriented API.
+compliance_program:
+  certifications: []
+  trust_center: null
+  published: false
+  note: Verified absent - probe-security-programs.py returned vdp=none trust=none, and no
+    certification wordmark or compliance page exists on the site.
+x-evidence:
+  fetched: '2026-08-10'
+  checks:
+  - url: https://openserp.org/.well-known/api-catalog
+    http_status: 200
+  - url: https://openserp.org/.well-known/mcp.json
+    http_status: 200
+  - url: https://openserp.org/llms.txt
+    http_status: 200
+  - url: https://openserp.org/robots.txt
+    http_status: 200
+  - url: https://openserp.org/.well-known/security.txt
+    http_status: 404
+  - url: https://openserp.org/.well-known/openid-configuration
+    http_status: 404
+  - url: https://openserp.org/.well-known/agent-card.json
+    http_status: 404

@@ -1,0 +1,75 @@
+generated: '2026-08-10'
+method: searched
+source: https://openserp.org/docs/cloud-monitor-webhooks/
+spec_type: Webhooks
+asyncapi_published: false
+note: OpenSERP publishes no AsyncAPI document. It does document one real webhook surface — Search
+  Monitor run notifications — captured here as a webhook catalog. Probes for /asyncapi.yaml,
+  /asyncapi.json and an events/event-catalog page all missed, and no AsyncAPI file exists in any of
+  the five first-party repositories.
+product: Search Monitor
+description: Search Monitor runs scheduled cross-engine rank checks. When a completed run produces
+  alerts, OpenSERP POSTs a single JSON event to the configured webhook URL.
+configuration:
+  where: the monitor's Settings tab in the OpenSERP dashboard
+  fields:
+  - webhook URL
+  - signing secret (optional)
+transport:
+  protocol: https
+  method: POST
+  content_type: application/json
+  direction: outbound (provider to subscriber)
+security:
+  signature:
+    header: X-OpenSERP-Signature
+    format: sha256=<hex digest>
+    algorithm: HMAC-SHA256
+    signed_payload: the raw request body
+    secret: the signing secret configured on the monitor
+    verification: recompute the HMAC over the raw body and compare in constant time
+    optional: true
+    note: The signature header is only sent when a signing secret is configured on the monitor.
+events:
+- name: monitor.run.completed
+  description: Emitted when a Search Monitor run completes and has produced at least one alert.
+  payload:
+    event: event type identifier
+    monitor:
+      id: monitor identifier
+      name: monitor name
+    run_id: numeric identifier for the monitoring run
+    alerts:
+    - type: alert class
+      title: alert headline
+      body: alert detail text
+      details:
+        keyword: the tracked keyword
+        engine: the search engine the alert came from
+        region: the region the check ran in
+    ts: ISO 8601 timestamp
+    text: Slack-compatible plain-text summary
+    content: Discord-compatible message text
+  note: The payload deliberately carries both `text` and `content` so the same URL can be pointed
+    at a Slack incoming webhook or a Discord webhook with no adapter in between.
+chat_integration:
+  slack: reads the `text` field directly
+  discord: reads the `content` field directly
+retry_policy:
+  documented: false
+  note: No retry, backoff or delivery-guarantee policy is documented. A subscriber cannot tell
+    whether a failed delivery is retried, so at-least-once handling must be assumed defensively.
+gaps:
+- No AsyncAPI or JSON Schema for the payload.
+- Only one event type; no account, billing, credit-exhaustion or key-revocation events.
+- No documented retry policy, delivery guarantee, or replay/redelivery mechanism.
+- No documented event id for de-duplication (`run_id` is the closest available key).
+x-evidence:
+  fetched: '2026-08-10'
+  checks:
+  - url: https://openserp.org/docs/cloud-monitor-webhooks/
+    http_status: 200
+  - url: https://openserp.org/asyncapi.yaml
+    http_status: 404
+  - url: https://api.openserp.org/asyncapi.yaml
+    http_status: 404

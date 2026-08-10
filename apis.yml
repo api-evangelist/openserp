@@ -1,23 +1,179 @@
 aid: openserp
 name: OpenSERP
-description: 'OpenSERP is a company surfaced via the API Evangelist harvest backlog (source: direct) and
-  added to the network as a stub for full-pipeline profiling.'
+description: OpenSERP is an open-source, self-hostable SERP API that returns structured search results
+  from Google, Bing, Yandex, Baidu, DuckDuckGo and Ecosia through one REST interface, alongside OpenSERP
+  Cloud, a managed pay-as-you-go version of the same API adding page extraction, multi-engine megasearch,
+  image search and scheduled rank monitoring. The self-hosted server ships an MIT-licensed Go binary and
+  CLI with a published OpenAPI 3.0.3 contract, a v2 response envelope carrying query echo, metadata,
+  normalized results and pagination, plus cache, proxy-pool and circuit-breaker telemetry endpoints.
+  OpenSERP Cloud adds bearer-token authentication, credit-metered billing, engine health routing, batch
+  URL extraction and Search Monitor webhooks, and the project publishes first-party JavaScript and Python
+  SDKs, an MCP server and an n8n community node.
 url: https://raw.githubusercontent.com/api-evangelist/openserp/refs/heads/main/apis.yml
+image: https://openserp.org/icon.svg
 x-type: company
 x-source: harvest:direct
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-10'
 modified: '2026-08-10'
+x-enrichment:
+  date: '2026-08-10'
+  status: enriched
+  artifacts_added: 27
+  pass: local-v1
 tags:
 - Company
-apis: []
+- Search
+- SERP
+- Search API
+- Web Scraping
+- Content Extraction
+- AI Grounding
+- Rank Tracking
+- Open Source
+- Developer Tools
+apis:
+- aid: openserp-cloud
+  name: OpenSERP Cloud API
+  description: The managed, hosted version of the OpenSERP search API. Bearer-token authenticated,
+    credit-metered pay-as-you-go REST API exposing single-engine web and image search across Google,
+    Bing, Yandex, Baidu, DuckDuckGo and Ecosia, multi-engine megasearch with balanced/any/fast execution
+    modes, single and batch URL extraction, account balance and live per-operation pricing.
+  humanURL: https://openserp.org/docs/cloud/
+  baseURL: https://api.openserp.org
+  tags:
+  - Search
+  - SERP
+  - Content Extraction
+  - Image Search
+  properties:
+  - type: Documentation
+    url: https://openserp.org/docs/cloud/
+  - type: APIReference
+    url: https://openserp.org/docs/cloud-endpoints/
+  - type: GettingStarted
+    url: https://openserp.org/docs/cloud-quickstart/
+  - type: Authentication
+    url: https://openserp.org/docs/cloud-authentication/
+  - type: ErrorCatalog
+    url: https://openserp.org/docs/cloud-errors/
+  - type: Examples
+    url: https://openserp.org/docs/cloud-examples/
+  - type: Plans
+    url: https://openserp.org/docs/cloud-pricing/
+  - type: Webhooks
+    url: https://openserp.org/docs/cloud-monitor-webhooks/
+- aid: openserp-oss
+  name: OpenSERP Server (self-hosted)
+  description: The MIT-licensed, self-hosted OpenSERP REST server. Runs on port 7000 by default and
+    exposes dedicated per-engine web and image search, Google and Bing SERP HTML parsing, multi-engine
+    mega search, single and batch URL extraction, health and readiness probes, and cache, proxy-pool and
+    circuit-breaker statistics. Ships a published OpenAPI 3.0.3 contract and a Swagger UI at /docs.
+  humanURL: https://openserp.org/docs/
+  baseURL: http://localhost:7000
+  tags:
+  - Search
+  - SERP
+  - Self-Hosted
+  - Open Source
+  properties:
+  - type: OpenAPI
+    url: openapi/openserp-oss-openapi.yml
+  - type: Documentation
+    url: https://openserp.org/docs/
+  - type: SourceCode
+    url: https://github.com/karust/openserp
+  - type: Architecture
+    url: https://openserp.org/docs/architecture/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/openserp-agentic-access.yml
+- type: DomainSecurity
+  url: security/openserp-domain-security.yml
 - type: Website
   url: https://openserp.org
+- type: DeveloperPortal
+  url: https://openserp.org/docs/
+- type: Documentation
+  url: https://openserp.org/docs/
+- type: APIReference
+  url: https://openserp.org/docs/cloud-endpoints/
+- type: GettingStarted
+  url: https://openserp.org/docs/cloud-quickstart/
+- type: Authentication
+  url: https://openserp.org/docs/cloud-authentication/
+- type: ErrorCatalog
+  url: https://openserp.org/docs/cloud-errors/
+- type: Pricing
+  url: https://openserp.org/pricing/
+- type: Plans
+  url: https://openserp.org/docs/cloud-pricing/
+- type: Blog
+  url: https://openserp.org/blog/
+- type: BlogRSS
+  url: https://openserp.org/blog/rss.xml
+- type: GitHubOrganization
+  url: https://github.com/openserpapi
+- type: SourceCode
+  url: https://github.com/karust/openserp
+- type: LLMsTxt
+  url: https://openserp.org/llms.txt
+- type: WellKnown
+  url: https://openserp.org/.well-known/api-catalog
+- type: MCPServer
+  url: https://openserp.org/.well-known/mcp.json
+- type: Login
+  url: https://openserp.org/login/
+- type: SignUp
+  url: https://openserp.org/register/
+- type: TermsOfService
+  url: https://openserp.org/terms/
+- type: PrivacyPolicy
+  url: https://openserp.org/privacy/
+- type: Support
+  url: mailto:support@openserp.org
+- type: Community
+  url: https://t.me/openserp_cloud
+- type: Authentication
+  url: authentication/openserp-authentication.yml
+- type: Conventions
+  url: conventions/openserp-conventions.yml
+- type: ErrorCatalog
+  url: errors/openserp-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/openserp-lifecycle.yml
+- type: ChangeLog
+  url: changelog/openserp-changelog.yml
+- type: Packages
+  url: packages/openserp-packages.yml
+- type: SDKs
+  url: packages/openserp-packages.yml
+- type: CLI
+  url: cli/openserp-cli.yml
+- type: Sandbox
+  url: sandbox/openserp-sandbox.yml
+- type: DataModel
+  url: data-model/openserp-data-model.yml
+- type: Conformance
+  url: conformance/openserp-conformance.yml
+- type: WellKnown
+  url: well-known/openserp-well-known.yml
+- type: ContentSignal
+  url: well-known/openserp-robots.txt
+- type: LLMsTxt
+  url: llms/openserp-llms.txt
+- type: MCPServer
+  url: mcp/openserp-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/openserp-tool-crosswalk.yml
+- type: Webhooks
+  url: asyncapi/openserp-monitor-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Overlay
+  url: overlays/openserp-oss-overlay.yaml

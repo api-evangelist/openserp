@@ -1,0 +1,107 @@
+generated: '2026-08-10'
+method: searched
+status: published
+source: https://openserp.org/.well-known/mcp.json
+docs: https://openserp.org/docs/cloud-examples/#mcp-server
+server:
+  name: "@openserp/mcp"
+  title: OpenSERP MCP Server
+  version: 0.1.7
+  transport: stdio
+  command: npx
+  args:
+  - "-y"
+  - "@openserp/mcp"
+  registry: npm
+  install: npx -y @openserp/mcp
+  repository: https://github.com/openserpapi/mcp
+  server_card: https://openserp.org/.well-known/mcp.json
+  mcp_protocol_version: '2025-06-18'
+  description: Model Context Protocol server for OpenSERP OSS and OpenSERP Cloud. Exposes live SERP
+    search, multi-engine search, image search, single and batch URL extraction, usage and
+    engine-listing tools.
+local_http:
+  command: npx -y @openserp/mcp --http --host 127.0.0.1 --port 3333
+  streamable_http_endpoint: http://127.0.0.1:3333/mcp
+  sse_endpoint: http://127.0.0.1:3333/sse
+  note: The server is stdio-first. There is NO provider-hosted remote MCP endpoint — the HTTP
+    transport is a local flag on the same npm package, so `tools/list` cannot be introspected
+    over the network.
+environment:
+- name: OPENSERP_API_KEY
+  required: false
+  description: Cloud API key. When omitted the server runs in OSS mode against http://localhost:7000.
+- name: OPENSERP_BASE_URL
+  required: false
+  description: Override the API base URL for a compatible OpenSERP deployment.
+- name: OPENSERP_BACKEND
+  required: false
+  description: Force `cloud` or OSS mode. `get_usage` requires cloud.
+capabilities:
+  tools: true
+  resources: dynamic
+  prompts: false
+tools:
+- name: search
+  title: Search
+  description: Search web results with a specific OpenSERP engine.
+  required: [engine]
+  source_operation: openapi/openserp-oss-openapi.yml#searchWeb
+- name: mega_search
+  title: Mega Search
+  description: Search across multiple engines with balanced, any, or fast execution.
+  source_operation: openapi/openserp-oss-openapi.yml#megaSearch
+- name: fast_search
+  title: Fast Search
+  description: Search using the fastest currently healthy engine.
+  source_operation: openapi/openserp-oss-openapi.yml#megaSearch
+  note: mega_search pinned to mode=fast.
+- name: any_search
+  title: Any Search
+  description: Try engines in order and return the first successful web result set.
+  source_operation: openapi/openserp-oss-openapi.yml#megaSearch
+  note: mega_search pinned to mode=any.
+- name: image_search
+  title: Image Search
+  description: Search image results with a specific OpenSERP engine.
+  required: [engine]
+  source_operation: openapi/openserp-oss-openapi.yml#searchImages
+- name: mega_image
+  title: Mega Image Search
+  description: Search images across multiple engines.
+  source_operation: openapi/openserp-oss-openapi.yml#megaImageSearch
+- name: extract
+  title: Extract URL
+  description: Extract LLM-ready content from a URL.
+  required: [url]
+  source_operation: openapi/openserp-oss-openapi.yml#extractURL
+- name: batch_extract
+  title: Extract several URLs
+  description: Extract LLM-ready content from up to 20 URLs in one request. One round-trip; a URL
+    that fails returns an item with an error instead of failing the batch.
+  required: [urls]
+  source_operation: openapi/openserp-oss-openapi.yml#extractBatch
+- name: get_usage
+  title: Get Usage
+  description: Return OpenSERP Cloud account and credit information. Cloud-only.
+  source_operation: null
+  note: Backed by the Cloud-only GET /v1/me, which has no counterpart in the published OSS OpenAPI.
+- name: list_engines
+  title: List Engines
+  description: List available engines on OSS, or Cloud engine capabilities on Cloud.
+  source_operation: openapi/openserp-oss-openapi.yml#listMegaEngines
+  note: On Cloud this calls GET /v1/engines/capabilities instead.
+x-evidence:
+  fetched: '2026-08-10'
+  server_card:
+    url: https://openserp.org/.well-known/mcp.json
+    http_status: 200
+    content_type: application/json
+  tools_source:
+    url: https://github.com/openserpapi/mcp/blob/main/src/mcp-server.ts
+    note: 'The server card declares `"tools": ["dynamic"]`, so the tool list was read from the
+      published, MIT-licensed server source (registerTool calls with their zod inputSchemas) rather
+      than from a live tools/list introspection. There is no hosted endpoint to introspect.'
+  npm:
+    url: https://registry.npmjs.org/@openserp%2Fmcp
+    http_status: 200

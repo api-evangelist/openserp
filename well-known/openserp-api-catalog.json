@@ -1,0 +1,72 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://api.openserp.org",
+      "service-doc": [
+        {
+          "href": "https://openserp.org/docs/cloud/",
+          "type": "text/html",
+          "title": "OpenSERP Cloud API documentation"
+        },
+        {
+          "href": "https://openserp.org/docs/cloud-endpoints/",
+          "type": "text/html",
+          "title": "OpenSERP Cloud endpoint reference"
+        },
+        {
+          "href": "https://openserp.org/docs/cloud-examples/",
+          "type": "text/html",
+          "title": "OpenSERP Cloud usage examples"
+        }
+      ],
+      "help": [
+        {
+          "href": "https://openserp.org/docs/cloud-quickstart/",
+          "type": "text/html",
+          "title": "OpenSERP Cloud quickstart"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://openserp.org/dashboard/status",
+          "type": "text/html",
+          "title": "OpenSERP Cloud status"
+        }
+      ],
+      "terms-of-service": [
+        {
+          "href": "https://openserp.org/terms/",
+          "type": "text/html",
+          "title": "OpenSERP Terms of Service"
+        }
+      ]
+    },
+    {
+      "anchor": "https://openserp.org",
+      "service-doc": [
+        {
+          "href": "https://openserp.org/docs/",
+          "type": "text/html",
+          "title": "OpenSERP OSS documentation"
+        },
+        {
+          "href": "https://github.com/karust/openserp#readme",
+          "type": "text/html",
+          "title": "OpenSERP OSS README"
+        }
+      ],
+      "alternate": [
+        {
+          "href": "https://openserp.org/llms.txt",
+          "type": "text/plain",
+          "title": "OpenSERP LLM index"
+        },
+        {
+          "href": "https://openserp.org/llms-full.txt",
+          "type": "text/plain",
+          "title": "OpenSERP full LLM context"
+        }
+      ]
+    }
+  ]
+}

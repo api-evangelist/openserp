@@ -1,0 +1,131 @@
+generated: '2026-08-10'
+method: searched
+source: https://openserp.org/docs/cloud-endpoints/, https://openserp.org/docs/cloud-errors/,
+  https://openserp.org/docs/cloud-authentication/, openapi/openserp-oss-openapi.yml
+summary: OpenSERP is a read-oriented search API. Every operation is a GET except the two SERP HTML
+  parsers and batch extraction, so the surface is naturally safe to retry and the provider documents
+  no idempotency-key contract — correctly, since there is nothing to de-duplicate.
+authentication:
+  style: bearer token in the Authorization header (Cloud); none (self-hosted OSS)
+  detail: authentication/openserp-authentication.yml
+idempotency:
+  supported: false
+  header: null
+  note: No Idempotency-Key header, parameter or retention window is documented anywhere in the Cloud
+    docs, and the published OpenAPI declares none. 16 of the 18 OSS operations are GET and therefore
+    naturally idempotent; the two non-idempotent-shaped POSTs (/google/parse, /bing/parse) are pure
+    functions over a supplied HTML body, and POST /extract/batch is a read fan-out. No `Idempotency`
+    pointer is emitted for this provider.
+pagination:
+  style: offset
+  request_params:
+  - name: start
+    in: query
+    type: integer
+    minimum: 0
+    description: Pagination offset.
+  - name: limit
+    in: query
+    type: integer
+    range: 1-100
+    default: 10
+    description: Maximum organic results to return.
+  response_field: pagination
+  response_shape: The v2 envelope carries a top-level `pagination` object alongside `query`, `meta`
+    and `results`.
+  note: Cloud bills single-engine pagination per request, so deeper pages cost additional credits
+    (1 credit per 10 returned web positions, rounded up).
+response_envelope:
+  version: '2.2'
+  fields:
+  - query: echo of the interpreted request (text, lang, region, engines_requested)
+  - meta: request_id, requested_at, took_ms, engines_failed, version
+  - results: normalized result array (id, rank, type, title, url, display_url, snippet, domain,
+      favicon, position, engine, domain_info)
+  - serp_features: rich SERP features when `features=true`
+  - pagination: offset/limit paging state
+  alternate_formats:
+    param: format
+    values: [json, markdown, text, ndjson]
+    note: '`json` returns the envelope; the other three return flattened renderings intended for
+      LLM consumption.'
+error_envelope:
+  shape: '{"error": "<machine-readable code>", "code": <http status>, "message": "<human text>",
+    "reason": "<optional detail tag>"}'
+  guidance: Branch on `error` and `code`; treat `message` as user-facing text only.
+  detail: errors/openserp-problem-types.yml
+  rfc9457: false
+  note: A hand-rolled JSON error object, not application/problem+json.
+request_tracing:
+  header: X-Request-ID
+  format: UUID v7
+  note: Mirrors `meta.request_id` in the response body and appears in server logs. Cloud documents
+    the same identifier as `X-Request-Id`.
+rate_limiting:
+  signalled: true
+  status: 429
+  error_code: rate_limited
+  retry_after_header: Retry-After
+  quantitative_limits_published: false
+  note: The Cloud error reference documents a per-key rate limit and instructs clients to honour
+    Retry-After, but publishes no numeric threshold, window, or X-RateLimit-* headers. The
+    self-hosted server has no rate limit.
+metering_headers:
+- name: X-Credits-Used
+  description: Credits charged for this request (Cloud).
+- name: X-Credits-Remaining
+  description: Account credit balance after this request (Cloud).
+- name: X-Engine-Used
+  description: Engine actually selected by any/fast routing (Cloud).
+telemetry_headers:
+- name: X-Request-ID
+  description: UUID v7 request identifier, matches meta.request_id.
+- name: X-Cache
+  description: Cache status when caching is enabled - HIT, MISS or BYPASS.
+- name: X-Fallback-Engine
+  description: Engine used when dedicated-endpoint fallback served the response.
+- name: X-Network-Bytes
+  description: Inbound network bytes consumed executing the search. Cache hits return 0.
+- name: X-Proxy-Mode
+  description: Effective proxy mode; `request_url` means a per-request X-Proxy-URL was honoured.
+- name: X-Proxy-Tag
+  description: Effective proxy tag when X-Proxy-Mode=tag_pool.
+- name: X-Proxy-Used
+  description: Effective proxy target - direct, a masked scheme://host:port, pooled, multiple or
+    mixed. Credentials are never included.
+- name: X-Browser-Profile-Id
+  description: Browser profile selected for browser-mode execution.
+request_headers:
+- name: X-Use-Proxy
+  description: Request-scoped proxy override (self-hosted).
+- name: X-Proxy-URL
+  description: Per-request proxy URL supplied by an upstream balancer (self-hosted).
+- name: X-Proxy-Country
+  description: Two-letter market country code for the supplied proxy.
+- name: X-Proxy-Class
+  description: Proxy class - datacenter, residential, mobile.
+- name: X-Proxy-Provider
+  description: Upstream proxy provider identifier.
+- name: X-Proxy-Session-ID
+  description: Sticky session identifier minted by the balancer.
+- name: X-Tenant
+  description: Optional tenant scope namespacing sticky lane state across multi-tenant deployments.
+versioning:
+  api_version_scheme: uri-path
+  cloud_prefix: /v1
+  oss_prefix: none
+  envelope_version: '2.2'
+  detail: lifecycle/openserp-lifecycle.yml
+field_selection:
+  expansion_supported: false
+  sparse_fields_supported: false
+  note: In place of field expansion, OpenSERP offers inline enrichment - `extract` (boolean or
+    integer depth 1-5) embeds cleaned target-page content directly into the top web results, and
+    `features=true` populates the serp_features array.
+metadata_support: false
+cross_links:
+  errors: errors/openserp-problem-types.yml
+  lifecycle: lifecycle/openserp-lifecycle.yml
+  authentication: authentication/openserp-authentication.yml
+  webhooks: asyncapi/openserp-monitor-webhooks.yml
+  openapi: openapi/openserp-oss-openapi.yml

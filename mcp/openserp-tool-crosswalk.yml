@@ -1,0 +1,130 @@
+generated: '2026-08-10'
+method: derived
+source: mcp/openserp-mcp.yml + openapi/openserp-oss-openapi.yml + https://openserp.org/docs/cloud-endpoints/
+summary: Binds each of the 10 published OpenSERP MCP tools to the OpenAPI operation(s) that back it.
+  The MCP server is a thin client over the same REST surface, so bindings are high confidence; the
+  divergences are that (a) fast_search / any_search are mega_search with the `mode` selector removed,
+  and (b) get_usage is Cloud-only and has no operation in the published OSS spec.
+surfaces:
+  openapi:
+    file: openapi/openserp-oss-openapi.yml
+    title: OpenSERP API 2.2.0
+    operations: 18
+    gated: false
+    note: Published in the MIT-licensed repo at karust/openserp/docs/openapi.yaml and served by the
+      self-hosted server at GET /openapi.yaml.
+  cloud_rest:
+    base_url: https://api.openserp.org
+    gated: true
+    note: OpenSERP Cloud publishes NO OpenAPI. Its endpoint surface is documented in HTML at
+      https://openserp.org/docs/cloud-endpoints/ and every operation except GET /v1/pricing returns
+      401 `unauthorized` anonymously. Cloud paths are the OSS paths under a /v1 prefix, plus
+      /v1/me, /v1/pricing, /v1/engines/status and /v1/engines/capabilities.
+  graphql: null
+  mcp:
+    server: "@openserp/mcp"
+    transport: stdio
+    gated: false
+    introspected: false
+    note: stdio-only, no provider-hosted endpoint, so tools/list could not be called over the
+      network. Tool names, titles, descriptions and input schemas were read verbatim from the
+      published server source (src/mcp-server.ts).
+crosswalk:
+- tool: search
+  category: search
+  rest: [searchWeb]
+  binding: rest
+  confidence: high
+  note: GET /{engine}/search. Cloud equivalent GET /v1/{engine}/search. Tool `engine` enum maps to
+    the EnginePath parameter; text/lang/region/date/file/site/limit/start/filter/features/format map
+    1:1 to the spec query parameters; extract/extractMode/minRunes map to extract/extract_mode/min_runes.
+- tool: image_search
+  category: search
+  rest: [searchImages]
+  binding: rest
+  confidence: high
+  note: GET /{engine}/image. Cloud equivalent GET /v1/{engine}/image. Page-content extraction
+    parameters are deliberately absent from the image tools.
+- tool: mega_search
+  category: multi-engine
+  rest: [megaSearch]
+  binding: rest
+  confidence: high
+  note: GET /mega/search. `mode` maps to MegaModeQuery (balanced|any|fast), `engines` to
+    EnginesQuery, `dedupe`/`merge` to MegaDedupeQuery/MegaMergeQuery.
+- tool: fast_search
+  category: multi-engine
+  rest: [megaSearch]
+  binding: rest
+  confidence: high
+  note: Same operation as mega_search with `mode` fixed to `fast` and the mode selector removed from
+    the tool input schema. Cloud documents it as GET /v1/mega/search?mode=fast and bills it flat.
+- tool: any_search
+  category: multi-engine
+  rest: [megaSearch]
+  binding: rest
+  confidence: high
+  note: Same operation as mega_search with `mode` fixed to `any`. Cloud documents it as
+    GET /v1/mega/search?mode=any.
+- tool: mega_image
+  category: multi-engine
+  rest: [megaImageSearch]
+  binding: rest
+  confidence: high
+  note: GET /mega/image. Cloud equivalent GET /v1/mega/image.
+- tool: extract
+  category: extraction
+  rest: [extractURL, extractURLPost]
+  binding: rest
+  confidence: high
+  note: The spec exposes both GET /extract and POST /extract for the same capability; the tool takes
+    a single `url` plus mode/lang/minRunes/clean/useLlmsTxt/region/format.
+- tool: batch_extract
+  category: extraction
+  rest: [extractBatch]
+  binding: rest
+  confidence: high
+  note: POST /extract/batch, capped at 20 URLs in both the tool schema and the Cloud docs.
+- tool: list_engines
+  category: discovery
+  rest: [listMegaEngines]
+  binding: rest
+  confidence: medium
+  note: In OSS mode this calls GET /mega/engines (listMegaEngines). In Cloud mode the same tool
+    calls GET /v1/engines/capabilities, which has no operation in the published OSS spec — the tool
+    fans out across backends.
+- tool: get_usage
+  category: account
+  rest: []
+  binding: none
+  confidence: high
+  note: See mcp_only.
+mcp_only:
+- tool: get_usage
+  reason: Cloud-only account and credit balance. Backed by GET /v1/me on api.openserp.org, which is
+    documented in HTML but absent from the published OSS OpenAPI (the self-hosted server has no
+    accounts or billing). The tool errors in OSS mode.
+rest_only:
+- capability: SERP HTML parsing
+  operations: [parseGoogleHTML, parseBingHTML]
+  note: POST /google/parse and POST /bing/parse accept a raw SERP HTML document and return the
+    structured envelope. No MCP tool exposes this.
+- capability: health and readiness
+  operations: [healthCheck, readinessCheck]
+  note: GET /health and GET /ready. Cloud exposes a related GET /v1/engines/status, also untooled.
+- capability: runtime telemetry
+  operations: [getStats, getCacheStats, getProxyStats, getCircuitBreakerStats]
+  note: Cache, proxy-pool and circuit-breaker statistics for a self-hosted deployment.
+- capability: spec and docs self-service
+  operations: [getOpenAPISpec, getSwaggerUI]
+  note: GET /openapi.yaml and GET /docs.
+- capability: live pricing
+  operations: []
+  note: Cloud-only GET /v1/pricing (anonymous, 200) has neither an OSS operation nor an MCP tool.
+coverage:
+  tools_named: 10
+  tools_bound_to_rest: 9
+  mcp_only: 1
+  rest_operations_total: 18
+  rest_operations_with_a_tool: 8
+  rest_operations_without_a_tool: 10

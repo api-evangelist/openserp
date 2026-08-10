@@ -1,0 +1,109 @@
+# OpenSERP
+
+OpenSERP is the free, open-source, self-hosted SERP API. Get structured search results from Google, Bing, Yandex, Baidu, DuckDuckGo and Ecosia through one REST interface, then use the official managed version OpenSERP Cloud at https://api.openserp.org when a hosted API is preferred. This is the machine-readable index for the project.
+
+## Primary Pages
+- https://openserp.org/ — homepage: free open-source SERP API, hero docs/quickstart, FAQ
+- https://openserp.org/cloud/ — OpenSERP Cloud overview: managed SERP API, extraction, recurring rank monitoring (Search Monitor), and AI reports
+- https://openserp.org/pricing/ — OpenSERP Cloud live pricing and calculator
+- https://openserp.org/features/ — feature hub
+- https://openserp.org/features/megasearch/
+- https://openserp.org/features/rank-tracking/ — Search Monitor: scheduled cross-engine rank tracking, competitor monitoring, and AI reports
+- https://openserp.org/features/url-extraction/
+- https://openserp.org/features/ai-grounding/
+- https://openserp.org/features/serp-features/
+- https://openserp.org/features/image-search/
+- https://openserp.org/about/ — official project identity and trusted links
+- https://openserp.org/comparisons/serp-api/
+- https://openserp.org/comparisons/serp-api-rank-tracking/
+- https://openserp.org/comparisons/search-api-for-llm-grounding/
+- https://openserp.org/comparisons/firecrawl/ — OpenSERP (SERP API) vs Firecrawl (crawler): discovery vs extraction
+- https://openserp.org/comparisons/searxng/ — OpenSERP (SERP API) vs SearXNG (privacy metasearch frontend)
+- https://openserp.org/alternatives/tavily/
+- https://openserp.org/alternatives/serpapi/ — OpenSERP as a free open-source SerpAPI alternative
+- https://openserp.org/alternatives/firecrawl/ — OpenSERP as a search-first Firecrawl alternative
+- https://openserp.org/terms/
+- https://openserp.org/privacy/
+- https://openserp.org/cookies/
+- https://openserp.org/login
+- https://openserp.org/forgot-password
+- https://github.com/karust/openserp — open-source repository (MIT)
+- https://github.com/karust/openserp#readme
+
+## Blog
+- https://openserp.org/blog/ — articles on SERP APIs, self-hosted search, and AI grounding
+- https://openserp.org/blog/multi-engine-rank-tracking/ - what cross-engine rank differences show, when to track them, and how Search Monitor works
+- https://openserp.org/blog/multi-engine-serp-data-yandex-baidu-bing/ - multi-engine SERP data for international SEO
+- https://openserp.org/blog/self-hosted-rank-tracker/ - a small rank tracker built with Python, SQLite, cron, and OpenSERP
+- https://openserp.org/blog/searxng-vs-openserp/ — SearXNG (privacy metasearch frontend) vs OpenSERP (self-hostable SERP API) and which to use
+- https://openserp.org/blog/google-scraper-getting-blocked/ — why Google scrapers hit CAPTCHAs and how browser-rendered requests avoid blocks
+- https://openserp.org/blog/open-source-serpapi-alternatives-2026/ — self-hosted vs managed SERP API alternatives
+- https://openserp.org/blog/grounding-ai-agents-live-web-search/ — grounding LLM agents and RAG with live web search
+- https://openserp.org/blog/rss.xml — blog RSS feed
+
+## OSS Documentation
+- https://openserp.org/docs/
+- https://openserp.org/docs/architecture/
+- https://openserp.org/docs/contributing/
+
+## Cloud Documentation
+- https://openserp.org/docs/cloud/
+- https://openserp.org/docs/cloud-quickstart/
+- https://openserp.org/docs/cloud-examples/
+- https://openserp.org/docs/search-api-examples/ — per-engine search API examples hub (Google, Bing, Yandex, Baidu, DuckDuckGo, Ecosia)
+- https://openserp.org/docs/google-search-api-example/ — Google Search API example: region/lang, filters, rank check
+- https://openserp.org/docs/bing-search-api-example/ — Bing Search API example: web and image search
+- https://openserp.org/docs/yandex-search-api-example/ — Yandex Search API example: Russia/CIS and Cyrillic queries
+- https://openserp.org/docs/baidu-search-api-example/ — Baidu Search API example: mainland China and Simplified Chinese
+- https://openserp.org/docs/duckduckgo-search-api-example/ — DuckDuckGo Search API example: neutral, un-personalized results
+- https://openserp.org/docs/ecosia-search-api-example/ — Ecosia Search API example: Bing-powered results with a European lean
+- https://openserp.org/docs/megasearch-ranking-diff/ — megasearch and cross-engine ranking diff: compare a page's rank across engines
+- https://openserp.org/docs/cloud-authentication/
+- https://openserp.org/docs/cloud-endpoints/
+- https://openserp.org/docs/cloud-pricing/
+- https://openserp.org/docs/oss-vs-cloud/
+- https://openserp.org/docs/cloud-errors/
+- https://openserp.org/docs/cloud-monitor-webhooks/
+
+## Project Status
+- OpenSERP OSS (self-hosted REST API + CLI, MIT-licensed) - available now. Free, no API keys, no rate limits. The recommended starting point for developers, researchers, and self-hosters.
+- OpenSERP Cloud (managed hosted API at https://api.openserp.org) - available now, pay-as-you-go credits ($0.009 per 10 returned web results by default), no subscription, no monthly minimum.
+- OpenSERP is positioned as the open-source alternative to paid SERP API providers (SerpApi, Serper, Scale SERP, etc.). Use the OSS version free, or use OpenSERP Cloud when self-hosting is not preferred.
+- `/dashboard/*` (account, keys, top-up, search playground, balance, status) is intentionally excluded from indexing and requires authentication.
+
+## API Surface
+
+OSS (self-hosted, default port 7000):
+- `GET /google/search`
+- `GET /bing/search`
+- `GET /yandex/search`
+- `GET /baidu/search`
+- `GET /duckduckgo/search`
+
+Cloud (https://api.openserp.org, bearer-token auth):
+- `GET /v1/google/search`
+- `GET /v1/bing/search`
+- `GET /v1/yandex/search`
+- `GET /v1/baidu/search`
+- `GET /v1/duckduckgo/search`
+- `GET /v1/ecosia/search`
+- `GET /v1/{engine}/image` - image search for any supported engine
+- `GET /v1/mega/search` - aggregated, deduplicated multi-engine search
+- `GET /v1/mega/image` - aggregated image search
+- `GET /v1/mega/search?mode=any` - ordered first-successful web search
+- `GET /v1/mega/search?mode=fast` - health-sorted first-successful web search
+- `GET /v1/mega/image?mode=any` - ordered first-successful image search
+- `GET /v1/mega/image?mode=fast` - health-sorted first-successful image search
+- `GET /v1/me` - account and credit balance
+- `GET /v1/pricing` - live per-operation credit prices
+
+## Contact
+- Feedback: hello@openserp.org
+- Support: support@openserp.org
+- Legal: legal@openserp.org
+- Privacy: privacy@openserp.org
+
+## Extended Context
+- https://openserp.org/llms-full.txt
+- https://openserp.org/.well-known/api-catalog — machine-readable API discovery catalog
+- https://openserp.org/.well-known/mcp/server-card.json — OpenSERP MCP server discovery card

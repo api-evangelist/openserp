@@ -1,0 +1,64 @@
+generated: '2026-08-10'
+method: searched
+source: https://github.com/karust/openserp#readme
+docs: https://openserp.org/docs/
+name: openserp
+description: The OpenSERP binary is both the self-hosted API server and a search CLI. The same Go
+  binary either serves the REST API on port 7000 or runs a one-shot search from the terminal.
+license: MIT
+install:
+- method: go
+  command: go install github.com/karust/openserp@latest
+- method: docker
+  command: docker run --rm -p 127.0.0.1:7000:7000 karust/openserp:latest
+  note: Runs the server, not the CLI subcommand.
+- method: source
+  command: go build -o openserp .
+- method: release-binary
+  url: https://github.com/karust/openserp/releases
+commands:
+- command: search
+  description: Query a search engine directly from the terminal without running the server.
+  usage: openserp search <engine> "<query>" [flags]
+  example: openserp search ecosia 'weather in london' --format markdown
+  engines: [google, yandex, baidu, bing, duckduckgo, ecosia]
+- command: serve
+  description: Run the REST API server. Port 7000 by default.
+  note: Server mode is what the Docker image runs; it exposes the operations in
+    openapi/openserp-oss-openapi.yml plus a Swagger UI at /docs.
+flags:
+- flag: "--format"
+  values: [json, markdown, text, ndjson]
+  description: Output format.
+- flag: "--limit"
+  description: Number of results to return.
+- flag: "--lang"
+  description: Language code (EN, DE, RU, ES, ...).
+- flag: "--region"
+  description: Market or location hint.
+- flag: "--date"
+  description: Date range filter.
+- flag: "--site"
+  description: Restrict results to a domain.
+- flag: "--extract"
+  description: Fetch and embed cleaned target-page content.
+- flag: "--proxy"
+  description: HTTP or SOCKS5 proxy specification.
+- flag: "--raw"
+  description: Browserless HTTP mode (no headless browser).
+- flag: "-p"
+  description: Server port (default 7000).
+configuration:
+  file: config.yaml
+  description: Advanced proxy pools, cache settings and other runtime parameters for server mode.
+  source: https://github.com/karust/openserp/blob/main/config.yaml
+cloud_cli:
+  exists: false
+  note: There is no CLI for OpenSERP Cloud. Cloud is called with curl or the first-party SDKs.
+x-evidence:
+  fetched: '2026-08-10'
+  checks:
+  - url: https://raw.githubusercontent.com/karust/openserp/refs/heads/main/README.md
+    http_status: 200
+  - url: https://hub.docker.com/v2/repositories/karust/openserp/
+    http_status: 200

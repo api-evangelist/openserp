@@ -1,0 +1,64 @@
+generated: '2026-08-10'
+method: searched
+source: https://openserp.org/docs/cloud-quickstart/, https://openserp.org/docs/cloud-pricing/,
+  https://github.com/karust/openserp#readme
+summary: OpenSERP publishes no test-mode key class and no mock data. Its sandbox story is instead
+  the open-source server itself — the docs explicitly tell developers to point the same SDK at a
+  local self-hosted instance with no API key — plus a small set of zero-credit Cloud endpoints and a
+  one-time free credit grant.
+test_vs_live:
+  separate_test_keys: false
+  key_prefixes:
+    live: osk_live_
+    test: null
+  note: Only one live key class (`osk_live_`) is documented. There is no test-mode key, no
+    test-mode flag, and no simulated result set.
+local_sandbox:
+  supported: true
+  base_url: http://localhost:7000
+  api_key_required: false
+  documented_at: https://openserp.org/docs/cloud-quickstart/
+  quote: 'Running the open-source server locally? Use the same SDK code with baseUrl:
+    "http://localhost:7000" and no API key.'
+  start_command: docker run --rm -p 127.0.0.1:7000:7000 karust/openserp:latest
+  note: The self-hosted server returns real live SERP data, not fixtures — it is a free execution
+    environment, not a deterministic test double.
+free_credits:
+  amount: 60
+  unit: credits
+  card_required: false
+  recurring: false
+  description: New accounts receive a one-time grant of 60 free credits, roughly 60 first-page
+    searches.
+  source: https://openserp.org/docs/cloud-pricing/
+zero_cost_operations:
+- operation: GET /v1/me
+  credits: 0
+  purpose: Validate a key and read the account balance. Documented as the deployment smoke test.
+- operation: GET /v1/pricing
+  credits: 0
+  purpose: Live per-operation credit prices. Answers anonymously with HTTP 200.
+- operation: GET /v1/engines/status
+  credits: 0
+  purpose: Engine health and latency.
+interactive_console:
+  name: Search Playground
+  url: https://openserp.org/dashboard/playground
+  authenticated: true
+  note: Named in the docs and in llms.txt as part of the authenticated dashboard; /dashboard/* is
+    excluded from indexing and could not be reached anonymously.
+not_published:
+- Deterministic test fixtures or canned SERP responses.
+- Magic test identifiers or simulated error triggers.
+- Time simulation / test clocks.
+- A hosted mock server.
+x-evidence:
+  fetched: '2026-08-10'
+  checks:
+  - url: https://openserp.org/docs/cloud-quickstart/
+    http_status: 200
+  - url: https://openserp.org/docs/cloud-pricing/
+    http_status: 200
+  - url: https://api.openserp.org/v1/pricing
+    http_status: 200
+    observed: '{"credit_price_usd":0.009, ...} - eight operation classes, all 1 credit / $0.009'

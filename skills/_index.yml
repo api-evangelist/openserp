@@ -1,0 +1,37 @@
+generated: '2026-08-10'
+method: generated
+source: openapi/openserp-oss-openapi.yml, conventions/openserp-conventions.yml,
+  errors/openserp-problem-types.yml, mcp/openserp-tool-crosswalk.yml
+note: Every operationId referenced below was verified verbatim against
+  openapi/openserp-oss-openapi.yml. No provider-published AGENTS.md or skill files were found in
+  any of the five first-party repositories.
+skills:
+- file: openserp-ground-an-answer-in-live-search.md
+  name: Ground an answer in live web search
+  description: Search across engines, then batch-extract the best sources so an answer can be
+    written and cited from primary material.
+  api: openapi/openserp-oss-openapi.yml
+  operations: [megaSearch, extractBatch]
+  mcp_tools: [mega_search, batch_extract]
+- file: openserp-check-a-rank-across-engines.md
+  name: Check where a page ranks across search engines
+  description: Measure a domain's position for a keyword on several engines in one pass, using
+    clusters for the cross-engine diff and engine_errors to avoid reading a failure as a lost rank.
+  api: openapi/openserp-oss-openapi.yml
+  operations: [megaSearch, searchWeb, listMegaEngines]
+  mcp_tools: [mega_search, search, list_engines]
+- file: openserp-extract-clean-page-content.md
+  name: Extract clean page content from URLs
+  description: Turn URLs into clean markdown or text for a RAG index, choosing the cheapest
+    extraction strategy that still returns usable content.
+  api: openapi/openserp-oss-openapi.yml
+  operations: [extractURL, extractURLPost, extractBatch]
+  mcp_tools: [extract, batch_extract]
+- file: openserp-operate-a-self-hosted-server.md
+  name: Operate a self-hosted OpenSERP server
+  description: Bring up the MIT-licensed server, verify health and readiness, and read cache,
+    proxy-pool and circuit-breaker telemetry to diagnose a failing engine.
+  api: openapi/openserp-oss-openapi.yml
+  operations: [healthCheck, readinessCheck, listMegaEngines, getStats, getCacheStats, getProxyStats,
+    getCircuitBreakerStats, getOpenAPISpec]
+  mcp_tools: [list_engines]

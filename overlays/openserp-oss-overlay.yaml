@@ -1,0 +1,80 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for OpenSERP Server (self-hosted)
+  version: 1.0.0
+extends: openapi/openserp-oss-openapi.yml
+x-generated: '2026-08-10'
+x-method: generated
+x-source: derived from the artifacts in this repository; the harvested spec is never mutated
+actions:
+- target: $.info
+  update:
+    x-apievangelist-profile: https://apis.io/provider/openserp/
+    x-apievangelist-artifacts:
+      authentication: authentication/openserp-authentication.yml
+      conventions: conventions/openserp-conventions.yml
+      errors: errors/openserp-problem-types.yml
+      lifecycle: lifecycle/openserp-lifecycle.yml
+      data_model: data-model/openserp-data-model.yml
+      mcp: mcp/openserp-mcp.yml
+      tool_crosswalk: mcp/openserp-tool-crosswalk.yml
+      webhooks: asyncapi/openserp-monitor-webhooks.yml
+      packages: packages/openserp-packages.yml
+      cli: cli/openserp-cli.yml
+      sandbox: sandbox/openserp-sandbox.yml
+      conformance: conformance/openserp-conformance.yml
+      skills: skills/_index.yml
+- target: $.servers
+  description: The harvested spec lists only the local default. Record the managed Cloud host, which
+    serves the same operation surface under a /v1 prefix with bearer authentication.
+  update:
+  - url: https://api.openserp.org/v1
+    description: OpenSERP Cloud (managed). Bearer-token authenticated, credit metered. Documented
+      at https://openserp.org/docs/cloud-endpoints/; OpenSERP publishes no OpenAPI for this host.
+    x-apievangelist-note: added by API Evangelist from the provider's HTML endpoint reference, not
+      from a machine-readable source
+- target: $.info
+  description: Record that the Cloud deployment of this same surface is authenticated, while the
+    published spec declares no security schemes.
+  update:
+    x-apievangelist-cloud-security:
+      scheme: http bearer
+      header: Authorization
+      token_prefix: osk_live_
+      applies_to: https://api.openserp.org
+      docs: https://openserp.org/docs/cloud-authentication/
+- target: $.paths['/{engine}/search'].get
+  update:
+    x-apievangelist-mcp-tool: search
+    x-apievangelist-cloud-path: /v1/{engine}/search
+    x-apievangelist-cloud-cost: 1 credit per 10 returned web positions, rounded up
+- target: $.paths['/{engine}/image'].get
+  update:
+    x-apievangelist-mcp-tool: image_search
+    x-apievangelist-cloud-path: /v1/{engine}/image
+- target: $.paths['/mega/search'].get
+  update:
+    x-apievangelist-mcp-tool: mega_search
+    x-apievangelist-mcp-tool-aliases: [fast_search, any_search]
+    x-apievangelist-cloud-path: /v1/mega/search
+    x-apievangelist-cloud-cost: dynamic on balanced mode (billed per successful engine); flat 1
+      credit on any/fast mode
+- target: $.paths['/mega/image'].get
+  update:
+    x-apievangelist-mcp-tool: mega_image
+    x-apievangelist-cloud-path: /v1/mega/image
+- target: $.paths['/extract'].get
+  update:
+    x-apievangelist-mcp-tool: extract
+    x-apievangelist-cloud-path: /v1/extract
+    x-apievangelist-cloud-cost: 1 credit fast fetch, 3 credits with browser rendering, +1 credit
+      when a region is supplied
+- target: $.paths['/extract/batch'].post
+  update:
+    x-apievangelist-mcp-tool: batch_extract
+    x-apievangelist-cloud-path: /v1/extract/batch
+    x-apievangelist-cloud-limit: 20 URLs per request
+- target: $.paths['/mega/engines'].get
+  update:
+    x-apievangelist-mcp-tool: list_engines
+    x-apievangelist-cloud-path: /v1/engines/capabilities

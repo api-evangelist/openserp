@@ -1,0 +1,66 @@
+generated: '2026-08-10'
+method: searched
+source: live probes of https://openserp.org and https://api.openserp.org
+hosts:
+- host: https://openserp.org
+  documents:
+  - path: /.well-known/api-catalog
+    status: 200
+    content_type: application/linkset+json
+    file: openserp-api-catalog.json
+    note: RFC 9727 API catalog linkset. Two anchors — https://api.openserp.org (Cloud) and
+      https://openserp.org (OSS) — carrying service-doc, help, status, terms-of-service and
+      alternate links.
+  - path: /.well-known/mcp.json
+    status: 200
+    content_type: application/json
+    file: openserp-mcp.json
+    note: MCP server card (schema mcp-server-card/v1). Byte-identical to the copy served at
+      /.well-known/mcp/server-card.json.
+  - path: /.well-known/mcp/server-card.json
+    status: 200
+    content_type: application/json
+    file: openserp-mcp.json
+    note: Second published location of the same MCP server card; advertised from llms.txt.
+  - path: /robots.txt
+    status: 200
+    content_type: text/plain
+    file: openserp-robots.txt
+    note: Not a /.well-known document, captured because it carries a Content-Signal
+      directive (`ai-train=yes, search=yes, ai-input=yes`) and explicit GPTBot / OAI-SearchBot
+      allow rules — a machine-readable AI-usage consent signal.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://api.openserp.org
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/mcp.json
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+x-negative-control:
+  note: openserp.org returns a genuine HTTP 404 for an invented path, so the 200s above are
+    real documents and not a soft-404 catch-all.
+  url: https://openserp.org/this-path-should-not-exist-xyz123/
+  status: 404
