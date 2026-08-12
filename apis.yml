@@ -91,6 +91,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: License
+  name: MIT
+  url: https://github.com/karust/openserp/blob/main/LICENSE
 - type: AgenticAccess
   url: agentic-access/openserp-agentic-access.yml
 - type: DomainSecurity
