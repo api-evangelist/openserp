@@ -13,7 +13,7 @@ url: https://raw.githubusercontent.com/api-evangelist/openserp/refs/heads/main/a
 image: https://openserp.org/icon.svg
 x-type: company
 x-source: harvest:direct
-specificationVersion: '0.20'
+specificationVersion: '0.23'
 created: '2026-08-10'
 modified: '2026-08-10'
 x-enrichment:
