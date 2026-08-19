@@ -1,0 +1,824 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "OpenSERP API",
+    "version": "2.2.0"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Search",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search web results from a specific engine",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/:engine/search",
+            "headers": [
+              {
+                "name": "X-Use-Proxy",
+                "value": ""
+              },
+              {
+                "name": "X-Proxy-URL",
+                "value": "http://user:pass@proxy.example:8080"
+              },
+              {
+                "name": "X-Proxy-Country",
+                "value": "us"
+              },
+              {
+                "name": "X-Proxy-Class",
+                "value": "residential"
+              },
+              {
+                "name": "X-Proxy-Provider",
+                "value": "webshare"
+              },
+              {
+                "name": "X-Proxy-Session-ID",
+                "value": "sid-123"
+              },
+              {
+                "name": "X-Tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "engine",
+                "value": "",
+                "type": "path",
+                "description": "Search engine endpoint alias (`duck` is DuckDuckGo)."
+              },
+              {
+                "name": "text",
+                "value": "golang",
+                "type": "query",
+                "description": "Search query text. At least one of `text`, `site`, or `file` must be non-empty.\n"
+              },
+              {
+                "name": "lang",
+                "value": "EN",
+                "type": "query",
+                "description": "Language code (engine-specific behavior)."
+              },
+              {
+                "name": "region",
+                "value": "",
+                "type": "query",
+                "description": "Market/location hint. Country or locale-style values such as `US`, `DE`, or `en-GB` are shared by engines that support them. Google also accepts city names such as `Berlin` or `New York` and sends them as `uule`. Yandex accepts numeric `lr` region IDs such as `213`; those IDs are engine-specific and are ignored by other engines.\n"
+              },
+              {
+                "name": "date",
+                "value": "20250101..20250131",
+                "type": "query",
+                "description": "Date interval in `YYYYMMDD..YYYYMMDD` format."
+              },
+              {
+                "name": "file",
+                "value": "PDF",
+                "type": "query",
+                "description": "File extension filter (for engines that support it)."
+              },
+              {
+                "name": "site",
+                "value": "github.com",
+                "type": "query",
+                "description": "Site/domain filter."
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "description": "Maximum organic results to return (1-100). Ads may be returned in addition. Omitted or small limits (<=10) parse only the first SERP page; larger limits may paginate when an engine supports it."
+              },
+              {
+                "name": "start",
+                "value": "20",
+                "type": "query",
+                "description": "Pagination offset (must be >= 0)."
+              },
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query",
+                "description": "Duplicate filtering flag (primarily used by Google parser behavior)."
+              },
+              {
+                "name": "features",
+                "value": "",
+                "type": "query",
+                "description": "Populate the top-level serp_features array (AI summaries, answer boxes, people-also-ask, related searches) from the live browser search when supported by the engine.\n"
+              },
+              {
+                "name": "extract",
+                "value": "",
+                "type": "query",
+                "description": "Fetch and embed cleaned target-page content for the top web results. Accepts a boolean or an integer depth: `extract=0`/`false` disables extraction; `extract=true`/`1` enriches the top result; `extract=N` (1-5) enriches the top N results. The tuning params `extract_mode` and `min_runes` imply `extract=true` (top 1) when present, unless `extract=0` is set explicitly.\n"
+              },
+              {
+                "name": "extract_mode",
+                "value": "",
+                "type": "query",
+                "description": "Extraction strategy for target pages. Its presence implies `extract=true` unless `extract=0` is set explicitly.\n"
+              },
+              {
+                "name": "min_runes",
+                "value": "",
+                "type": "query",
+                "description": "Auto-mode escalation floor: if the fast (raw) pass yields fewer extracted-text runes than this, escalate to a browser render. `0` (default) uses the built-in floor. Ignored in `fast` and `rendered` modes.\n"
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "query",
+                "description": "Output format. `json` (default) returns the envelope. `markdown` returns a Markdown document suitable for Slack/email. `text` returns a minimal plain-text block optimised for LLM context windows. `ndjson` returns one result object per line with no envelope. The `Accept` header is also checked (`text/markdown`, `text/plain`, `application/x-ndjson`).\n"
+              }
+            ]
+          },
+          "docs": "Engine path values are `google`, `yandex`, `baidu`, `bing`, `duck`, and `ecosia` (`duck` maps to DuckDuckGo internally). Use `?format=markdown|text|ndjson` for alternative output formats.\n"
+        },
+        {
+          "info": {
+            "name": "Search image results from a specific engine",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/:engine/image",
+            "headers": [
+              {
+                "name": "X-Use-Proxy",
+                "value": ""
+              },
+              {
+                "name": "X-Proxy-URL",
+                "value": "http://user:pass@proxy.example:8080"
+              },
+              {
+                "name": "X-Proxy-Country",
+                "value": "us"
+              },
+              {
+                "name": "X-Proxy-Class",
+                "value": "residential"
+              },
+              {
+                "name": "X-Proxy-Provider",
+                "value": "webshare"
+              },
+              {
+                "name": "X-Proxy-Session-ID",
+                "value": "sid-123"
+              },
+              {
+                "name": "X-Tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "engine",
+                "value": "",
+                "type": "path",
+                "description": "Search engine endpoint alias (`duck` is DuckDuckGo)."
+              },
+              {
+                "name": "text",
+                "value": "golang",
+                "type": "query",
+                "description": "Search query text. At least one of `text`, `site`, or `file` must be non-empty.\n"
+              },
+              {
+                "name": "lang",
+                "value": "EN",
+                "type": "query",
+                "description": "Language code (engine-specific behavior)."
+              },
+              {
+                "name": "region",
+                "value": "",
+                "type": "query",
+                "description": "Market/location hint. Country or locale-style values such as `US`, `DE`, or `en-GB` are shared by engines that support them. Google also accepts city names such as `Berlin` or `New York` and sends them as `uule`. Yandex accepts numeric `lr` region IDs such as `213`; those IDs are engine-specific and are ignored by other engines.\n"
+              },
+              {
+                "name": "date",
+                "value": "20250101..20250131",
+                "type": "query",
+                "description": "Date interval in `YYYYMMDD..YYYYMMDD` format."
+              },
+              {
+                "name": "file",
+                "value": "PDF",
+                "type": "query",
+                "description": "File extension filter (for engines that support it)."
+              },
+              {
+                "name": "site",
+                "value": "github.com",
+                "type": "query",
+                "description": "Site/domain filter."
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "description": "Maximum organic results to return (1-100). Ads may be returned in addition. Omitted or small limits (<=10) parse only the first SERP page; larger limits may paginate when an engine supports it."
+              },
+              {
+                "name": "start",
+                "value": "20",
+                "type": "query",
+                "description": "Pagination offset (must be >= 0)."
+              },
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query",
+                "description": "Duplicate filtering flag (primarily used by Google parser behavior)."
+              },
+              {
+                "name": "features",
+                "value": "",
+                "type": "query",
+                "description": "Populate the top-level serp_features array (AI summaries, answer boxes, people-also-ask, related searches) from the live browser search when supported by the engine.\n"
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "query",
+                "description": "Output format. `json` (default) returns the envelope. `markdown` returns a Markdown document suitable for Slack/email. `text` returns a minimal plain-text block optimised for LLM context windows. `ndjson` returns one result object per line with no envelope. The `Accept` header is also checked (`text/markdown`, `text/plain`, `application/x-ndjson`).\n"
+              }
+            ]
+          },
+          "docs": "Search image results from a specific engine"
+        },
+        {
+          "info": {
+            "name": "Parse a Google SERP HTML document into structured results",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://127.0.0.1:7000/google/parse",
+            "params": [
+              {
+                "name": "format",
+                "value": "",
+                "type": "query",
+                "description": "Output format. `json` (default) returns the envelope. `markdown` returns a Markdown document suitable for Slack/email. `text` returns a minimal plain-text block optimised for LLM context windows. `ndjson` returns one result object per line with no envelope. The `Accept` header is also checked (`text/markdown`, `text/plain`, `application/x-ndjson`).\n"
+              }
+            ]
+          },
+          "docs": "Accepts raw Google SERP HTML in the request body and returns a standard search envelope. Useful when an upstream provider delivers raw HTML rather than JSON. No browser is used; parsing is done with goquery. The body size limit is 10 MB.\n"
+        },
+        {
+          "info": {
+            "name": "Parse a Bing SERP HTML document into structured results",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://127.0.0.1:7000/bing/parse",
+            "params": [
+              {
+                "name": "format",
+                "value": "",
+                "type": "query",
+                "description": "Output format. `json` (default) returns the envelope. `markdown` returns a Markdown document suitable for Slack/email. `text` returns a minimal plain-text block optimised for LLM context windows. `ndjson` returns one result object per line with no envelope. The `Accept` header is also checked (`text/markdown`, `text/plain`, `application/x-ndjson`).\n"
+              }
+            ]
+          },
+          "docs": "Accepts raw Bing SERP HTML in the request body and returns a standard search envelope. Useful when an upstream provider delivers raw HTML rather than JSON. No browser is used; parsing is done with goquery. The body size limit is 10 MB.\n"
+        },
+        {
+          "info": {
+            "name": "Extract clean content from one URL",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/extract",
+            "headers": [
+              {
+                "name": "X-Use-Proxy",
+                "value": ""
+              },
+              {
+                "name": "X-Proxy-URL",
+                "value": "http://user:pass@proxy.example:8080"
+              }
+            ],
+            "params": [
+              {
+                "name": "url",
+                "value": "",
+                "type": "query",
+                "description": "Absolute URL to fetch and extract."
+              },
+              {
+                "name": "mode",
+                "value": "",
+                "type": "query",
+                "description": "Extraction strategy for one URL."
+              },
+              {
+                "name": "min_runes",
+                "value": "",
+                "type": "query",
+                "description": "Auto-mode escalation floor: if the fast (raw) pass yields fewer extracted-text runes than this, escalate to a browser render. `0` (default) uses the built-in floor. Ignored in `fast` and `rendered` modes.\n"
+              },
+              {
+                "name": "lang",
+                "value": "EN",
+                "type": "query",
+                "description": "Language code (engine-specific behavior)."
+              },
+              {
+                "name": "clean",
+                "value": "",
+                "type": "query",
+                "description": "Article-only extraction (default). Set `false` for whole-readable-body extraction that keeps nav/feature/landing content trafilatura would otherwise strip — useful for landing pages, doc indexes, and dashboards.\n"
+              },
+              {
+                "name": "use_llms_txt",
+                "value": "",
+                "type": "query",
+                "description": "When the URL is a site root, probe `/llms-full.txt` then `/llms.txt` and return that LLM-optimized markdown instead of scraping HTML (see https://llmstxt.org/). Falls through to normal extraction when absent. Ignored for non-root URLs, where it would miss the requested page's own content.\n"
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "query",
+                "description": "Output format. `json` (default) returns the envelope. `markdown` returns a Markdown document suitable for Slack/email. `text` returns a minimal plain-text block optimised for LLM context windows. `ndjson` returns one result object per line with no envelope. The `Accept` header is also checked (`text/markdown`, `text/plain`, `application/x-ndjson`).\n"
+              }
+            ]
+          },
+          "docs": "Extract clean content from one URL"
+        },
+        {
+          "info": {
+            "name": "Extract clean content from one URL",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://127.0.0.1:7000/extract",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Extract clean content from one URL"
+        },
+        {
+          "info": {
+            "name": "Extract content from multiple URLs",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "http://127.0.0.1:7000/extract/batch",
+            "headers": [
+              {
+                "name": "X-Use-Proxy",
+                "value": ""
+              },
+              {
+                "name": "X-Proxy-URL",
+                "value": "http://user:pass@proxy.example:8080"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Accepts up to 20 URLs (deduplicated) and returns a bare JSON array of `{page_content, metadata}` items - the shape Open WebUI's external web loader expects. A URL that fails validation or extraction yields an item with `metadata.error` and an empty `page_content` instead of failing the batch. `400` is reserved for malformed requests: empty or oversized `urls`, unknown `mode`, invalid proxy headers.\n"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Mega",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Search across multiple engines with selectable execution mode",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/mega/search",
+            "headers": [
+              {
+                "name": "X-Use-Proxy",
+                "value": ""
+              },
+              {
+                "name": "X-Proxy-URL",
+                "value": "http://user:pass@proxy.example:8080"
+              },
+              {
+                "name": "X-Proxy-Country",
+                "value": "us"
+              },
+              {
+                "name": "X-Proxy-Class",
+                "value": "residential"
+              },
+              {
+                "name": "X-Proxy-Provider",
+                "value": "webshare"
+              },
+              {
+                "name": "X-Proxy-Session-ID",
+                "value": "sid-123"
+              },
+              {
+                "name": "X-Tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "text",
+                "value": "golang",
+                "type": "query",
+                "description": "Search query text. At least one of `text`, `site`, or `file` must be non-empty.\n"
+              },
+              {
+                "name": "lang",
+                "value": "EN",
+                "type": "query",
+                "description": "Language code (engine-specific behavior)."
+              },
+              {
+                "name": "region",
+                "value": "",
+                "type": "query",
+                "description": "Market/location hint. Country or locale-style values such as `US`, `DE`, or `en-GB` are shared by engines that support them. Google also accepts city names such as `Berlin` or `New York` and sends them as `uule`. Yandex accepts numeric `lr` region IDs such as `213`; those IDs are engine-specific and are ignored by other engines.\n"
+              },
+              {
+                "name": "date",
+                "value": "20250101..20250131",
+                "type": "query",
+                "description": "Date interval in `YYYYMMDD..YYYYMMDD` format."
+              },
+              {
+                "name": "file",
+                "value": "PDF",
+                "type": "query",
+                "description": "File extension filter (for engines that support it)."
+              },
+              {
+                "name": "site",
+                "value": "github.com",
+                "type": "query",
+                "description": "Site/domain filter."
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "description": "Maximum organic results to return (1-100). Ads may be returned in addition. Omitted or small limits (<=10) parse only the first SERP page; larger limits may paginate when an engine supports it."
+              },
+              {
+                "name": "start",
+                "value": "20",
+                "type": "query",
+                "description": "Pagination offset (must be >= 0)."
+              },
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query",
+                "description": "Duplicate filtering flag (primarily used by Google parser behavior)."
+              },
+              {
+                "name": "features",
+                "value": "",
+                "type": "query",
+                "description": "Populate the top-level serp_features array (AI summaries, answer boxes, people-also-ask, related searches) from the live browser search when supported by the engine.\n"
+              },
+              {
+                "name": "engines",
+                "value": "google,bing,duckduckgo",
+                "type": "query",
+                "description": "Comma-separated engine list for mega endpoints. If omitted, all available engines are used.\n"
+              },
+              {
+                "name": "mode",
+                "value": "",
+                "type": "query",
+                "description": "Mega execution mode. `balanced` (default) runs all selected engines in parallel. `any` runs selected engines sequentially in request order until first success. `fast` runs only one engine: the fastest by circuit-breaker average response time.\n"
+              },
+              {
+                "name": "dedupe",
+                "value": "",
+                "type": "query",
+                "description": "Enable deduplication by normalized URL. Default `true`.\n"
+              },
+              {
+                "name": "merge",
+                "value": "",
+                "type": "query",
+                "description": "Merge results from all successful engines into one flat list. Default `true`. When `false`, only the first requested engine that returned results is kept.\n"
+              },
+              {
+                "name": "extract",
+                "value": "",
+                "type": "query",
+                "description": "Fetch and embed cleaned target-page content for the top web results. Accepts a boolean or an integer depth: `extract=0`/`false` disables extraction; `extract=true`/`1` enriches the top result; `extract=N` (1-5) enriches the top N results. The tuning params `extract_mode` and `min_runes` imply `extract=true` (top 1) when present, unless `extract=0` is set explicitly.\n"
+              },
+              {
+                "name": "extract_mode",
+                "value": "",
+                "type": "query",
+                "description": "Extraction strategy for target pages. Its presence implies `extract=true` unless `extract=0` is set explicitly.\n"
+              },
+              {
+                "name": "min_runes",
+                "value": "",
+                "type": "query",
+                "description": "Auto-mode escalation floor: if the fast (raw) pass yields fewer extracted-text runes than this, escalate to a browser render. `0` (default) uses the built-in floor. Ignored in `fast` and `rendered` modes.\n"
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "query",
+                "description": "Output format. `json` (default) returns the envelope. `markdown` returns a Markdown document suitable for Slack/email. `text` returns a minimal plain-text block optimised for LLM context windows. `ndjson` returns one result object per line with no envelope. The `Accept` header is also checked (`text/markdown`, `text/plain`, `application/x-ndjson`).\n"
+              }
+            ]
+          },
+          "docs": "Mode controls engine execution strategy: `balanced` (default) queries all selected engines in parallel, `any` runs engines sequentially in requested order until first success, and `fast` queries only the fastest engine based on circuit-breaker average response time stats. In `balanced` mode, `dedupe` and `merge` tune aggregation behavior. Partial failures are surfaced in `meta.engines_failed` and `meta.engine_errors`. If all selected engines fail, the endpoint returns a 502 with per-engine error"
+        },
+        {
+          "info": {
+            "name": "Image search across multiple engines with selectable execution mode",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/mega/image",
+            "headers": [
+              {
+                "name": "X-Use-Proxy",
+                "value": ""
+              },
+              {
+                "name": "X-Proxy-URL",
+                "value": "http://user:pass@proxy.example:8080"
+              },
+              {
+                "name": "X-Proxy-Country",
+                "value": "us"
+              },
+              {
+                "name": "X-Proxy-Class",
+                "value": "residential"
+              },
+              {
+                "name": "X-Proxy-Provider",
+                "value": "webshare"
+              },
+              {
+                "name": "X-Proxy-Session-ID",
+                "value": "sid-123"
+              },
+              {
+                "name": "X-Tenant",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "text",
+                "value": "golang",
+                "type": "query",
+                "description": "Search query text. At least one of `text`, `site`, or `file` must be non-empty.\n"
+              },
+              {
+                "name": "lang",
+                "value": "EN",
+                "type": "query",
+                "description": "Language code (engine-specific behavior)."
+              },
+              {
+                "name": "region",
+                "value": "",
+                "type": "query",
+                "description": "Market/location hint. Country or locale-style values such as `US`, `DE`, or `en-GB` are shared by engines that support them. Google also accepts city names such as `Berlin` or `New York` and sends them as `uule`. Yandex accepts numeric `lr` region IDs such as `213`; those IDs are engine-specific and are ignored by other engines.\n"
+              },
+              {
+                "name": "date",
+                "value": "20250101..20250131",
+                "type": "query",
+                "description": "Date interval in `YYYYMMDD..YYYYMMDD` format."
+              },
+              {
+                "name": "file",
+                "value": "PDF",
+                "type": "query",
+                "description": "File extension filter (for engines that support it)."
+              },
+              {
+                "name": "site",
+                "value": "github.com",
+                "type": "query",
+                "description": "Site/domain filter."
+              },
+              {
+                "name": "limit",
+                "value": "10",
+                "type": "query",
+                "description": "Maximum organic results to return (1-100). Ads may be returned in addition. Omitted or small limits (<=10) parse only the first SERP page; larger limits may paginate when an engine supports it."
+              },
+              {
+                "name": "start",
+                "value": "20",
+                "type": "query",
+                "description": "Pagination offset (must be >= 0)."
+              },
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query",
+                "description": "Duplicate filtering flag (primarily used by Google parser behavior)."
+              },
+              {
+                "name": "features",
+                "value": "",
+                "type": "query",
+                "description": "Populate the top-level serp_features array (AI summaries, answer boxes, people-also-ask, related searches) from the live browser search when supported by the engine.\n"
+              },
+              {
+                "name": "engines",
+                "value": "google,bing,duckduckgo",
+                "type": "query",
+                "description": "Comma-separated engine list for mega endpoints. If omitted, all available engines are used.\n"
+              },
+              {
+                "name": "mode",
+                "value": "",
+                "type": "query",
+                "description": "Mega execution mode. `balanced` (default) runs all selected engines in parallel. `any` runs selected engines sequentially in request order until first success. `fast` runs only one engine: the fastest by circuit-breaker average response time.\n"
+              },
+              {
+                "name": "dedupe",
+                "value": "",
+                "type": "query",
+                "description": "Enable deduplication by normalized URL. Default `true`.\n"
+              },
+              {
+                "name": "merge",
+                "value": "",
+                "type": "query",
+                "description": "Merge results from all successful engines into one flat list. Default `true`. When `false`, only the first requested engine that returned results is kept.\n"
+              },
+              {
+                "name": "format",
+                "value": "",
+                "type": "query",
+                "description": "Output format. `json` (default) returns the envelope. `markdown` returns a Markdown document suitable for Slack/email. `text` returns a minimal plain-text block optimised for LLM context windows. `ndjson` returns one result object per line with no envelope. The `Accept` header is also checked (`text/markdown`, `text/plain`, `application/x-ndjson`).\n"
+              }
+            ]
+          },
+          "docs": "Image search across multiple engines with selectable execution mode"
+        },
+        {
+          "info": {
+            "name": "List available engines and runtime state",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/mega/engines"
+          },
+          "docs": "List available engines and runtime state"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Health",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Service health status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/health"
+          },
+          "docs": "Service health status"
+        },
+        {
+          "info": {
+            "name": "Service readiness status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/ready"
+          },
+          "docs": "Service readiness status"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Stats",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Combined cache, proxy, and circuit-breaker stats",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/stats"
+          },
+          "docs": "Combined cache, proxy, and circuit-breaker stats"
+        },
+        {
+          "info": {
+            "name": "Cache statistics only",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/stats/cache"
+          },
+          "docs": "Cache statistics only"
+        },
+        {
+          "info": {
+            "name": "Proxy pool and per-engine proxy policy statistics",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/stats/proxy"
+          },
+          "docs": "Proxy pool and per-engine proxy policy statistics"
+        },
+        {
+          "info": {
+            "name": "Circuit breaker state per engine",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/stats/cb"
+          },
+          "docs": "Circuit breaker state per engine"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Docs",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get raw OpenAPI YAML",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/openapi.yaml"
+          },
+          "docs": "Get raw OpenAPI YAML"
+        },
+        {
+          "info": {
+            "name": "Swagger UI for interactive API docs",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "http://127.0.0.1:7000/docs"
+          },
+          "docs": "Swagger UI for interactive API docs"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

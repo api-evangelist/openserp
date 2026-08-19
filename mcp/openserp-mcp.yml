@@ -4,29 +4,27 @@ status: published
 source: https://openserp.org/.well-known/mcp.json
 docs: https://openserp.org/docs/cloud-examples/#mcp-server
 server:
-  name: "@openserp/mcp"
+  name: '@openserp/mcp'
   title: OpenSERP MCP Server
   version: 0.1.7
   transport: stdio
   command: npx
   args:
-  - "-y"
-  - "@openserp/mcp"
+  - -y
+  - '@openserp/mcp'
   registry: npm
   install: npx -y @openserp/mcp
   repository: https://github.com/openserpapi/mcp
   server_card: https://openserp.org/.well-known/mcp.json
   mcp_protocol_version: '2025-06-18'
-  description: Model Context Protocol server for OpenSERP OSS and OpenSERP Cloud. Exposes live SERP
-    search, multi-engine search, image search, single and batch URL extraction, usage and
-    engine-listing tools.
+  description: Model Context Protocol server for OpenSERP OSS and OpenSERP Cloud. Exposes live SERP search,
+    multi-engine search, image search, single and batch URL extraction, usage and engine-listing tools.
 local_http:
   command: npx -y @openserp/mcp --http --host 127.0.0.1 --port 3333
   streamable_http_endpoint: http://127.0.0.1:3333/mcp
   sse_endpoint: http://127.0.0.1:3333/sse
-  note: The server is stdio-first. There is NO provider-hosted remote MCP endpoint — the HTTP
-    transport is a local flag on the same npm package, so `tools/list` cannot be introspected
-    over the network.
+  note: The server is stdio-first. There is NO provider-hosted remote MCP endpoint — the HTTP transport
+    is a local flag on the same npm package, so `tools/list` cannot be introspected over the network.
 environment:
 - name: OPENSERP_API_KEY
   required: false
@@ -45,7 +43,8 @@ tools:
 - name: search
   title: Search
   description: Search web results with a specific OpenSERP engine.
-  required: [engine]
+  required:
+  - engine
   source_operation: openapi/openserp-oss-openapi.yml#searchWeb
 - name: mega_search
   title: Mega Search
@@ -64,7 +63,8 @@ tools:
 - name: image_search
   title: Image Search
   description: Search image results with a specific OpenSERP engine.
-  required: [engine]
+  required:
+  - engine
   source_operation: openapi/openserp-oss-openapi.yml#searchImages
 - name: mega_image
   title: Mega Image Search
@@ -73,13 +73,15 @@ tools:
 - name: extract
   title: Extract URL
   description: Extract LLM-ready content from a URL.
-  required: [url]
+  required:
+  - url
   source_operation: openapi/openserp-oss-openapi.yml#extractURL
 - name: batch_extract
   title: Extract several URLs
-  description: Extract LLM-ready content from up to 20 URLs in one request. One round-trip; a URL
-    that fails returns an item with an error instead of failing the batch.
-  required: [urls]
+  description: Extract LLM-ready content from up to 20 URLs in one request. One round-trip; a URL that
+    fails returns an item with an error instead of failing the batch.
+  required:
+  - urls
   source_operation: openapi/openserp-oss-openapi.yml#extractBatch
 - name: get_usage
   title: Get Usage
@@ -99,9 +101,15 @@ x-evidence:
     content_type: application/json
   tools_source:
     url: https://github.com/openserpapi/mcp/blob/main/src/mcp-server.ts
-    note: 'The server card declares `"tools": ["dynamic"]`, so the tool list was read from the
-      published, MIT-licensed server source (registerTool calls with their zod inputSchemas) rather
-      than from a live tools/list introspection. There is no hosted endpoint to introspect.'
+    note: 'The server card declares `"tools": ["dynamic"]`, so the tool list was read from the published,
+      MIT-licensed server source (registerTool calls with their zod inputSchemas) rather than from a live
+      tools/list introspection. There is no hosted endpoint to introspect.'
   npm:
     url: https://registry.npmjs.org/@openserp%2Fmcp
     http_status: 200
+deployment:
+  mode: local-stdio
+  verified: searched
+  tools: 10
+  checked: '2026-08-12'
+  source: catalog MCP census
