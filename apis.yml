@@ -30,6 +30,17 @@ tags:
 - Content Extraction
 - AI Grounding
 - Rank Tracking
+- Open-Source
+- Developer Tools
+tags_raw:
+- Company
+- Search
+- SERP
+- Search API
+- Web Scraping
+- Content Extraction
+- AI Grounding
+- Rank Tracking
 - Open Source
 - Developer Tools
 apis:
@@ -72,6 +83,11 @@ apis:
   humanURL: https://openserp.org/docs/
   baseURL: http://localhost:7000
   tags:
+  - Search
+  - SERP
+  - Self-Hosted
+  - Open-Source
+  tags_raw:
   - Search
   - SERP
   - Self-Hosted
