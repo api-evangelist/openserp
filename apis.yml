@@ -46,10 +46,11 @@ tags_raw:
 apis:
 - aid: openserp-cloud
   name: OpenSERP Cloud API
-  description: The managed, hosted version of the OpenSERP search API. Bearer-token authenticated,
-    credit-metered pay-as-you-go REST API exposing single-engine web and image search across Google,
-    Bing, Yandex, Baidu, DuckDuckGo and Ecosia, multi-engine megasearch with balanced/any/fast execution
-    modes, single and batch URL extraction, account balance and live per-operation pricing.
+  description: >-
+    The managed, hosted version of the OpenSERP search API. Bearer-token authenticated, credit-metered
+    pay-as-you-go REST API exposing single-engine web and image search across Google, Bing, Yandex, Baidu,
+    DuckDuckGo and Ecosia, multi-engine megasearch with balanced/any/fast execution modes, single and
+    batch URL extraction, account balance and live per-operation pricing.
   humanURL: https://openserp.org/docs/cloud/
   baseURL: https://api.openserp.org
   tags:
@@ -74,27 +75,80 @@ apis:
     url: https://openserp.org/docs/cloud-pricing/
   - type: Webhooks
     url: https://openserp.org/docs/cloud-monitor-webhooks/
-- aid: openserp-oss
-  name: OpenSERP Server (self-hosted)
-  description: The MIT-licensed, self-hosted OpenSERP REST server. Runs on port 7000 by default and
-    exposes dedicated per-engine web and image search, Google and Bing SERP HTML parsing, multi-engine
-    mega search, single and batch URL extraction, health and readiness probes, and cache, proxy-pool and
-    circuit-breaker statistics. Ships a published OpenAPI 3.0.3 contract and a Swagger UI at /docs.
-  humanURL: https://openserp.org/docs/
-  baseURL: http://localhost:7000
+- aid: openserp:openserp-docs-api
+  name: OpenSERP Docs API
+  description: OpenAPI and Swagger UI endpoints
+  humanURL: https://openserp.org/docs/cloud/
+  baseURL: https://api.openserp.org
   tags:
-  - Search
-  - SERP
-  - Self-Hosted
-  - Open-Source
-  tags_raw:
-  - Search
-  - SERP
-  - Self-Hosted
-  - Open Source
+  - Docs
   properties:
   - type: OpenAPI
-    url: openapi/openserp-oss-openapi.yml
+    url: openapi/openserp-docs-api-openapi.yml
+  - type: Documentation
+    url: https://openserp.org/docs/
+  - type: SourceCode
+    url: https://github.com/karust/openserp
+  - type: Architecture
+    url: https://openserp.org/docs/architecture/
+- aid: openserp:openserp-health-api
+  name: OpenSERP Health API
+  description: Health and readiness endpoints
+  humanURL: https://openserp.org/docs/cloud/
+  baseURL: https://api.openserp.org
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/openserp-health-api-openapi.yml
+  - type: Documentation
+    url: https://openserp.org/docs/
+  - type: SourceCode
+    url: https://github.com/karust/openserp
+  - type: Architecture
+    url: https://openserp.org/docs/architecture/
+- aid: openserp:openserp-mega-api
+  name: OpenSERP Mega API
+  description: Cross-engine aggregated search endpoints
+  humanURL: https://openserp.org/docs/cloud/
+  baseURL: https://api.openserp.org
+  tags:
+  - Mega
+  properties:
+  - type: OpenAPI
+    url: openapi/openserp-mega-api-openapi.yml
+  - type: Documentation
+    url: https://openserp.org/docs/
+  - type: SourceCode
+    url: https://github.com/karust/openserp
+  - type: Architecture
+    url: https://openserp.org/docs/architecture/
+- aid: openserp:openserp-search-api
+  name: OpenSERP Search API
+  description: Dedicated per-engine search endpoints
+  humanURL: https://openserp.org/docs/cloud/
+  baseURL: https://api.openserp.org
+  tags:
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/openserp-search-api-openapi.yml
+  - type: Documentation
+    url: https://openserp.org/docs/
+  - type: SourceCode
+    url: https://github.com/karust/openserp
+  - type: Architecture
+    url: https://openserp.org/docs/architecture/
+- aid: openserp:openserp-stats-api
+  name: OpenSERP Stats API
+  description: Runtime statistics endpoints
+  humanURL: https://openserp.org/docs/cloud/
+  baseURL: https://api.openserp.org
+  tags:
+  - Stats
+  properties:
+  - type: OpenAPI
+    url: openapi/openserp-stats-api-openapi.yml
   - type: Documentation
     url: https://openserp.org/docs/
   - type: SourceCode
