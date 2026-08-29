@@ -10,6 +10,20 @@ description: OpenSERP is an open-source, self-hostable SERP API that returns str
   URL extraction and Search Monitor webhooks, and the project publishes first-party JavaScript and Python
   SDKs, an MCP server and an n8n community node.
 url: https://raw.githubusercontent.com/api-evangelist/openserp/refs/heads/main/apis.yml
+deliveryModel:
+  model: open-core
+  license: MIT
+  open_source: true
+  commercial: true
+  callable_host: false
+  label: Open core · an OSS project plus a commercial hosted product
+  confidence: high
+  source:
+  - license
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://openserp.org/icon.svg
 x-type: company
 x-source: harvest:direct
@@ -161,6 +175,12 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: IssueTracker
+  url: https://github.com/karust/openserp/issues
+- type: Releases
+  url: https://github.com/karust/openserp/releases
+- type: ContributionGuide
+  url: https://github.com/karust/openserp/blob/main/docs/CONTRIBUTING.md
 - type: License
   name: MIT
   url: https://github.com/karust/openserp/blob/main/LICENSE
