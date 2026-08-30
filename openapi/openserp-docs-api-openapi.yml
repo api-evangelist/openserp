@@ -1,0 +1,44 @@
+openapi: 3.2.0
+info:
+  title: OpenSERP Docs API
+  version: 2.2.0
+  description: 'OpenSERP provides dedicated and multi-engine search endpoints for Google, Yandex, Baidu, Bing, and DuckDuckGo. Search responses are wrapped in a v2 envelope with query echo, metadata, normalized results, and pagination. Invalid client input returns 400 with a machine-readable `reason` code.
+
+    '
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: http://127.0.0.1:7000
+  description: Local default server
+security: []
+tags:
+- name: Docs
+  description: OpenAPI and Swagger UI endpoints
+paths:
+  /openapi.yaml:
+    get:
+      tags:
+      - Docs
+      operationId: getOpenAPISpec
+      summary: Get raw OpenAPI YAML
+      responses:
+        '200':
+          description: OpenAPI YAML
+          content:
+            application/yaml:
+              schema:
+                type: string
+  /docs:
+    get:
+      tags:
+      - Docs
+      operationId: getSwaggerUI
+      summary: Swagger UI for interactive API docs
+      responses:
+        '200':
+          description: HTML page loading Swagger UI from CDN
+          content:
+            text/html:
+              schema:
+                type: string

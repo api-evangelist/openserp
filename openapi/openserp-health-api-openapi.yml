@@ -1,0 +1,111 @@
+openapi: 3.2.0
+info:
+  title: OpenSERP Health API
+  version: 2.2.0
+  description: 'OpenSERP provides dedicated and multi-engine search endpoints for Google, Yandex, Baidu, Bing, and DuckDuckGo. Search responses are wrapped in a v2 envelope with query echo, metadata, normalized results, and pagination. Invalid client input returns 400 with a machine-readable `reason` code.
+
+    '
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: http://127.0.0.1:7000
+  description: Local default server
+security: []
+tags:
+- name: Health
+  description: Health and readiness endpoints
+paths:
+  /health:
+    get:
+      tags:
+      - Health
+      operationId: healthCheck
+      summary: Service health status
+      responses:
+        '200':
+          description: Healthy or degraded service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        '503':
+          description: Unhealthy service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+  /ready:
+    get:
+      tags:
+      - Health
+      operationId: readinessCheck
+      summary: Service readiness status
+      responses:
+        '200':
+          description: Instance is ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessStatus'
+        '503':
+          description: Instance is draining
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessStatus'
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      required:
+      - status
+      - uptime
+      - engines
+      - system
+      properties:
+        status:
+          type: string
+          enum:
+          - healthy
+          - degraded
+          - unhealthy
+        uptime:
+          type: string
+          example: 1h12m3s
+        engines:
+          type: array
+          items:
+            $ref: '#/components/schemas/EngineHealth'
+        system:
+          type: object
+          additionalProperties: true
+    EngineHealth:
+      type: object
+      required:
+      - name
+      - initialized
+      - status
+      properties:
+        name:
+          type: string
+          example: google
+        initialized:
+          type: boolean
+          example: true
+        status:
+          type: string
+          enum:
+          - ready
+          - not_initialized
+          - circuit_open
+    ReadinessStatus:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - ready
+          - draining

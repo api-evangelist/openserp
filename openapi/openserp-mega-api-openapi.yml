@@ -1,0 +1,1263 @@
+openapi: 3.2.0
+info:
+  title: OpenSERP Mega API
+  version: 2.2.0
+  description: 'OpenSERP provides dedicated and multi-engine search endpoints for Google, Yandex, Baidu, Bing, and DuckDuckGo. Search responses are wrapped in a v2 envelope with query echo, metadata, normalized results, and pagination. Invalid client input returns 400 with a machine-readable `reason` code.
+
+    '
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: http://127.0.0.1:7000
+  description: Local default server
+security: []
+tags:
+- name: Mega
+  description: Cross-engine aggregated search endpoints
+paths:
+  /mega/search:
+    get:
+      tags:
+      - Mega
+      operationId: megaSearch
+      summary: Search across multiple engines with selectable execution mode
+      description: 'Mode controls engine execution strategy: `balanced` (default) queries all selected engines in parallel, `any` runs engines sequentially in requested order until first success, and `fast` queries only the fastest engine based on circuit-breaker average response time stats. In `balanced` mode, `dedupe` and `merge` tune aggregation behavior. Partial failures are surfaced in `meta.engines_failed` and `meta.engine_errors`. If all selected engines fail, the endpoint returns a 502 with per-engine error details. Use `?format=markdown|text|ndjson` for alternative output formats.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/TextQuery'
+      - $ref: '#/components/parameters/LangQuery'
+      - $ref: '#/components/parameters/RegionQuery'
+      - $ref: '#/components/parameters/DateQuery'
+      - $ref: '#/components/parameters/FileQuery'
+      - $ref: '#/components/parameters/SiteQuery'
+      - $ref: '#/components/parameters/LimitQuery'
+      - $ref: '#/components/parameters/StartQuery'
+      - $ref: '#/components/parameters/FilterQuery'
+      - $ref: '#/components/parameters/FeaturesQuery'
+      - $ref: '#/components/parameters/EnginesQuery'
+      - $ref: '#/components/parameters/MegaModeQuery'
+      - $ref: '#/components/parameters/MegaDedupeQuery'
+      - $ref: '#/components/parameters/MegaMergeQuery'
+      - $ref: '#/components/parameters/ExtractQuery'
+      - $ref: '#/components/parameters/ExtractModeQuery'
+      - $ref: '#/components/parameters/MinRunesQuery'
+      - $ref: '#/components/parameters/FormatQuery'
+      - $ref: '#/components/parameters/UseProxyHeader'
+      - $ref: '#/components/parameters/ProxyURLHeader'
+      - $ref: '#/components/parameters/ProxyCountryHeader'
+      - $ref: '#/components/parameters/ProxyClassHeader'
+      - $ref: '#/components/parameters/ProxyProviderHeader'
+      - $ref: '#/components/parameters/ProxySessionIDHeader'
+      - $ref: '#/components/parameters/TenantHeader'
+      responses:
+        '200':
+          description: Aggregated envelope with clusters
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/XRequestID'
+            X-Cache:
+              $ref: '#/components/headers/XCache'
+            X-Proxy-Mode:
+              $ref: '#/components/headers/XProxyMode'
+            X-Proxy-Tag:
+              $ref: '#/components/headers/XProxyTag'
+            X-Proxy-Used:
+              $ref: '#/components/headers/XProxyUsed'
+            X-Network-Bytes:
+              $ref: '#/components/headers/XNetworkBytes'
+            X-Browser-Profile-Id:
+              $ref: '#/components/headers/XBrowserProfileID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MegaSearchEnvelope'
+            text/markdown:
+              schema:
+                type: string
+            text/plain:
+              schema:
+                type: string
+            application/x-ndjson:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /mega/image:
+    get:
+      tags:
+      - Mega
+      operationId: megaImageSearch
+      summary: Image search across multiple engines with selectable execution mode
+      parameters:
+      - $ref: '#/components/parameters/TextQuery'
+      - $ref: '#/components/parameters/LangQuery'
+      - $ref: '#/components/parameters/RegionQuery'
+      - $ref: '#/components/parameters/DateQuery'
+      - $ref: '#/components/parameters/FileQuery'
+      - $ref: '#/components/parameters/SiteQuery'
+      - $ref: '#/components/parameters/LimitQuery'
+      - $ref: '#/components/parameters/StartQuery'
+      - $ref: '#/components/parameters/FilterQuery'
+      - $ref: '#/components/parameters/FeaturesQuery'
+      - $ref: '#/components/parameters/EnginesQuery'
+      - $ref: '#/components/parameters/MegaModeQuery'
+      - $ref: '#/components/parameters/MegaDedupeQuery'
+      - $ref: '#/components/parameters/MegaMergeQuery'
+      - $ref: '#/components/parameters/FormatQuery'
+      - $ref: '#/components/parameters/UseProxyHeader'
+      - $ref: '#/components/parameters/ProxyURLHeader'
+      - $ref: '#/components/parameters/ProxyCountryHeader'
+      - $ref: '#/components/parameters/ProxyClassHeader'
+      - $ref: '#/components/parameters/ProxyProviderHeader'
+      - $ref: '#/components/parameters/ProxySessionIDHeader'
+      - $ref: '#/components/parameters/TenantHeader'
+      responses:
+        '200':
+          description: Aggregated image results envelope
+          headers:
+            X-Request-ID:
+              $ref: '#/components/headers/XRequestID'
+            X-Cache:
+              $ref: '#/components/headers/XCache'
+            X-Proxy-Mode:
+              $ref: '#/components/headers/XProxyMode'
+            X-Proxy-Tag:
+              $ref: '#/components/headers/XProxyTag'
+            X-Proxy-Used:
+              $ref: '#/components/headers/XProxyUsed'
+            X-Network-Bytes:
+              $ref: '#/components/headers/XNetworkBytes'
+            X-Browser-Profile-Id:
+              $ref: '#/components/headers/XBrowserProfileID'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageEnvelope'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '429':
+          $ref: '#/components/responses/TooManyRequestsError'
+        '502':
+          $ref: '#/components/responses/BadGatewayError'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailableError'
+        '504':
+          $ref: '#/components/responses/GatewayTimeoutError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /mega/engines:
+    get:
+      tags:
+      - Mega
+      operationId: listMegaEngines
+      summary: List available engines and runtime state
+      responses:
+        '200':
+          description: Engine list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MegaEnginesResponse'
+components:
+  headers:
+    XBrowserProfileID:
+      description: 'Browser profile ID selected for browser-mode execution. Mega endpoints may return a comma-separated list when multiple profiles were used.
+
+        '
+      schema:
+        type: string
+    XNetworkBytes:
+      description: 'Aggregate inbound network bytes consumed while executing the search request. Single-engine endpoints report that engine''s request bytes; mega endpoints report the sum across selected engines. Cache hits return `0`.
+
+        '
+      schema:
+        type: integer
+        format: int64
+        minimum: 0
+    XProxyUsed:
+      description: 'Effective proxy target used. Values: `direct`, masked `scheme://host:port` URL, `pooled`, `multiple`, or `mixed`. Credentials are never included.
+
+        '
+      schema:
+        type: string
+    XProxyTag:
+      description: 'Effective proxy tag when `X-Proxy-Mode=tag_pool`. Header is omitted when no tag is in effect (i.e. `X-Proxy-Mode` is `request_url` or `off`).
+
+        '
+      schema:
+        type: string
+    XProxyMode:
+      description: 'Effective proxy mode for the request. `request_url` indicates a per-request `X-Proxy-URL` was honored.
+
+        '
+      schema:
+        type: string
+        enum:
+        - false
+        - tag_pool
+        - request_url
+    XCache:
+      description: Cache status when cache is enabled (`HIT`, `MISS`, `BYPASS`).
+      schema:
+        type: string
+        enum:
+        - HIT
+        - MISS
+        - BYPASS
+    XRequestID:
+      description: 'UUID v7 request identifier. Matches `meta.request_id` in the response body and appears in server logs for correlation.
+
+        '
+      schema:
+        type: string
+  parameters:
+    ProxyCountryHeader:
+      name: X-Proxy-Country
+      in: header
+      required: false
+      description: 'Two-letter market country code for the supplied proxy. Used as part of the cache key so different markets do not share results.
+
+        '
+      schema:
+        type: string
+      example: us
+    ProxySessionIDHeader:
+      name: X-Proxy-Session-ID
+      in: header
+      required: false
+      description: 'Sticky session identifier minted by the balancer. Reusing the same value lets OpenSERP reuse cookies and browser profile for that lane. Lanes are LRU-bounded by `proxies.lanes.max_lanes`. Rotating the session ID gives a clean lane.
+
+        '
+      schema:
+        type: string
+      example: sid-123
+    StartQuery:
+      name: start
+      in: query
+      required: false
+      description: Pagination offset (must be >= 0).
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      example: 20
+    ExtractModeQuery:
+      name: extract_mode
+      in: query
+      required: false
+      description: 'Extraction strategy for target pages. Its presence implies `extract=true` unless `extract=0` is set explicitly.
+
+        '
+      schema:
+        type: string
+        enum:
+        - auto
+        - fast
+        - rendered
+        default: auto
+    LimitQuery:
+      name: limit
+      in: query
+      required: false
+      description: Maximum organic results to return (1-100). Ads may be returned in addition. Omitted or small limits (<=10) parse only the first SERP page; larger limits may paginate when an engine supports it.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 10
+    FormatQuery:
+      name: format
+      in: query
+      required: false
+      description: 'Output format. `json` (default) returns the envelope. `markdown` returns a Markdown document suitable for Slack/email. `text` returns a minimal plain-text block optimised for LLM context windows. `ndjson` returns one result object per line with no envelope. The `Accept` header is also checked (`text/markdown`, `text/plain`, `application/x-ndjson`).
+
+        '
+      schema:
+        type: string
+        enum:
+        - json
+        - markdown
+        - text
+        - ndjson
+        default: json
+    FilterQuery:
+      name: filter
+      in: query
+      required: false
+      description: Duplicate filtering flag (primarily used by Google parser behavior).
+      schema:
+        type: boolean
+        default: true
+    ProxyClassHeader:
+      name: X-Proxy-Class
+      in: header
+      required: false
+      description: Proxy class identifier (e.g. `datacenter`, `residential`, `mobile`). Part of the cache key.
+      schema:
+        type: string
+      example: residential
+    LangQuery:
+      name: lang
+      in: query
+      required: false
+      description: Language code (engine-specific behavior).
+      schema:
+        type: string
+      example: EN
+    ProxyProviderHeader:
+      name: X-Proxy-Provider
+      in: header
+      required: false
+      description: Upstream proxy provider identifier (e.g. `webshare`, `brightdata`). Part of the cache key.
+      schema:
+        type: string
+      example: webshare
+    ExtractQuery:
+      name: extract
+      in: query
+      required: false
+      description: 'Fetch and embed cleaned target-page content for the top web results. Accepts a boolean or an integer depth: `extract=0`/`false` disables extraction; `extract=true`/`1` enriches the top result; `extract=N` (1-5) enriches the top N results. The tuning params `extract_mode` and `min_runes` imply `extract=true` (top 1) when present, unless `extract=0` is set explicitly.
+
+        '
+      schema:
+        oneOf:
+        - type: boolean
+        - type: integer
+          minimum: 0
+          maximum: 5
+        default: false
+    MegaDedupeQuery:
+      name: dedupe
+      in: query
+      required: false
+      description: 'Enable deduplication by normalized URL. Default `true`.
+
+        '
+      schema:
+        type: boolean
+        default: true
+    RegionQuery:
+      name: region
+      in: query
+      required: false
+      description: 'Market/location hint. Country or locale-style values such as `US`, `DE`, or `en-GB` are shared by engines that support them. Google also accepts city names such as `Berlin` or `New York` and sends them as `uule`. Yandex accepts numeric `lr` region IDs such as `213`; those IDs are engine-specific and are ignored by other engines.
+
+        '
+      schema:
+        type: string
+      examples:
+        yandex:
+          value: '213'
+        country:
+          value: RU
+        google_city:
+          value: Berlin
+    MegaMergeQuery:
+      name: merge
+      in: query
+      required: false
+      description: 'Merge results from all successful engines into one flat list. Default `true`. When `false`, only the first requested engine that returned results is kept.
+
+        '
+      schema:
+        type: boolean
+        default: true
+    FileQuery:
+      name: file
+      in: query
+      required: false
+      description: File extension filter (for engines that support it).
+      schema:
+        type: string
+      example: PDF
+    FeaturesQuery:
+      name: features
+      in: query
+      required: false
+      description: 'Populate the top-level serp_features array (AI summaries, answer boxes, people-also-ask, related searches) from the live browser search when supported by the engine.
+
+        '
+      schema:
+        type: boolean
+        default: true
+    ProxyURLHeader:
+      name: X-Proxy-URL
+      in: header
+      required: false
+      description: 'Per-request proxy URL supplied by an upstream balancer. Honored only when `proxies.allow_request_proxy_url: true` is set on the worker; otherwise the request is rejected with `400 bad_request` and `reason=REQUEST_PROXY_URL_DISABLED`. Authenticated SOCKS proxies are rejected in browser mode (`reason=UNSUPPORTED_PROXY_SCHEME`). Credentials are never logged or returned. Precedence: `X-Use-Proxy: direct` > `X-Proxy-URL` > `X-Use-Proxy: <tag>` > per-engine configured tag > `proxies.global` > direct.
+
+        '
+      schema:
+        type: string
+      example: http://user:pass@proxy.example:8080
+    DateQuery:
+      name: date
+      in: query
+      required: false
+      description: Date interval in `YYYYMMDD..YYYYMMDD` format.
+      schema:
+        type: string
+        pattern: ^[0-9]{8}\.\.[0-9]{8}$
+      example: 20250101..20250131
+    TenantHeader:
+      name: X-Tenant
+      in: header
+      required: false
+      description: 'Optional tenant scope used to namespace sticky lane state across multi-tenant deployments. When present, lanes are keyed by `tenant + engine + session_id`.
+
+        '
+      schema:
+        type: string
+    EnginesQuery:
+      name: engines
+      in: query
+      required: false
+      description: 'Comma-separated engine list for mega endpoints. If omitted, all available engines are used.
+
+        '
+      schema:
+        type: string
+      example: google,bing,duckduckgo
+    MinRunesQuery:
+      name: min_runes
+      in: query
+      required: false
+      description: 'Auto-mode escalation floor: if the fast (raw) pass yields fewer extracted-text runes than this, escalate to a browser render. `0` (default) uses the built-in floor. Ignored in `fast` and `rendered` modes.
+
+        '
+      schema:
+        type: integer
+        minimum: 0
+    SiteQuery:
+      name: site
+      in: query
+      required: false
+      description: Site/domain filter.
+      schema:
+        type: string
+      example: github.com
+    UseProxyHeader:
+      name: X-Use-Proxy
+      in: header
+      required: false
+      description: 'Request-scoped proxy override. Use `direct` to disable proxy or a tag name to force a specific proxy pool.
+
+        '
+      schema:
+        type: string
+      examples:
+        direct:
+          value: direct
+        tag:
+          value: us
+    TextQuery:
+      name: text
+      in: query
+      required: false
+      description: 'Search query text. At least one of `text`, `site`, or `file` must be non-empty.
+
+        '
+      schema:
+        type: string
+      example: golang
+    MegaModeQuery:
+      name: mode
+      in: query
+      required: false
+      description: 'Mega execution mode. `balanced` (default) runs all selected engines in parallel. `any` runs selected engines sequentially in request order until first success. `fast` runs only one engine: the fastest by circuit-breaker average response time.
+
+        '
+      schema:
+        type: string
+        enum:
+        - balanced
+        - any
+        - fast
+        default: balanced
+  schemas:
+    Pagination:
+      type: object
+      required:
+      - page
+      - has_more
+      - next_start
+      properties:
+        page:
+          type: integer
+          minimum: 1
+          example: 1
+        has_more:
+          type: boolean
+          example: true
+        next_start:
+          type: integer
+          example: 25
+    MegaSearchEnvelope:
+      allOf:
+      - $ref: '#/components/schemas/SearchEnvelope'
+      - type: object
+        properties:
+          clusters:
+            type:
+            - array
+            - 'null'
+            items:
+              $ref: '#/components/schemas/Cluster'
+            description: 'Cross-engine clusters, sorted by score descending. Only present on /mega/search responses. Absent (not null) on single-engine endpoints.
+
+              '
+    FeatureLink:
+      type: object
+      properties:
+        title:
+          type: string
+          example: OpenSERP
+        url:
+          type: string
+          example: https://openserp.org/
+    SerpFeature:
+      type: object
+      required:
+      - id
+      - engine
+      - type
+      - extracted_at
+      properties:
+        id:
+          type: string
+          description: Stable identifier prefixed with `f_`.
+          example: f_a1b2c3d4e5f6a1b2
+        engine:
+          type: string
+          example: google
+        type:
+          $ref: '#/components/schemas/ResultType'
+        title:
+          type: string
+          example: OpenSERP
+        text:
+          type: string
+          description: Primary human-readable feature content.
+          example: OpenSERP is an open-source SERP API.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureItem'
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureLink'
+        source_result_ids:
+          type: array
+          items:
+            type: string
+          example:
+          - s_a1b2c3d4e5f6a1b2
+        position:
+          $ref: '#/components/schemas/Position'
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.95
+        extracted_at:
+          type: string
+          format: date-time
+          example: '2026-04-24T12:00:00Z'
+    ClusterOccurrence:
+      type: object
+      required:
+      - engine
+      - rank
+      - result_id
+      properties:
+        engine:
+          type: string
+          example: google
+        rank:
+          type: integer
+          example: 1
+        result_id:
+          type: string
+          example: s_a1b2c3d4e5f6a1b2
+    ImageEnvelope:
+      type: object
+      required:
+      - query
+      - meta
+      - results
+      - pagination
+      properties:
+        query:
+          $ref: '#/components/schemas/QueryEcho'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageResult'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    ImageData:
+      type: object
+      required:
+      - url
+      properties:
+        url:
+          type: string
+          example: https://example.com/gopher.png
+        thumbnail:
+          type: string
+          example: https://example.com/gopher-thumb.png
+        width:
+          type: integer
+          example: 1200
+        height:
+          type: integer
+          example: 800
+    QueryEcho:
+      type: object
+      required:
+      - text
+      - engines_requested
+      properties:
+        text:
+          type: string
+          example: golang
+        lang:
+          type: string
+          example: EN
+        region:
+          type: string
+          example: US
+        engines_requested:
+          type: array
+          items:
+            type: string
+          example:
+          - google
+    MegaEngineInfo:
+      type: object
+      required:
+      - name
+      - initialized
+      properties:
+        name:
+          type: string
+        initialized:
+          type: boolean
+        circuit_state:
+          type: string
+          enum:
+          - closed
+          - open
+          - half-open
+    MegaEnginesResponse:
+      type: object
+      required:
+      - engines
+      - total
+      properties:
+        engines:
+          type: array
+          items:
+            $ref: '#/components/schemas/MegaEngineInfo'
+        total:
+          type: integer
+    ResultType:
+      type: string
+      description: 'SERP block type. New values require a minor version bump (`meta.version: "2.1"`). In v2.1, engines may emit specialized modules such as `people_also_ask` when a parser can classify them reliably.
+
+        '
+      enum:
+      - organic
+      - ad
+      - featured_snippet
+      - knowledge_panel
+      - people_also_ask
+      - video
+      - image
+      - news
+      - shopping
+      - local
+      - answer_box
+      - ai_summary
+      - related_questions
+      - related_searches
+      - sitelinks
+      - videos
+      - images_inline
+      - calculator
+      - weather
+      - dictionary
+    Classification:
+      type: object
+      properties:
+        content_type:
+          type: string
+          enum:
+          - article
+          - document
+          - video
+          - forum_thread
+          - webpage
+          example: article
+        source_hint:
+          type: string
+          example: encyclopedia
+    Cluster:
+      type: object
+      required:
+      - id
+      - canonical_url
+      - domain
+      - title
+      - occurrences
+      - engines_count
+      - best_rank
+      - score
+      properties:
+        id:
+          type: string
+          description: 'Stable identifier: `c_` + hex(first 8 bytes of MD5(normalized_url)).
+
+            '
+          example: c_a1b2c3d4e5f6a1b2
+        canonical_url:
+          type: string
+          example: https://go.dev/
+        domain:
+          type: string
+          example: go.dev
+        title:
+          type: string
+          example: The Go Programming Language
+        occurrences:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClusterOccurrence'
+        engines_count:
+          type: integer
+          description: Number of engines this URL appeared in.
+          example: 3
+        best_rank:
+          type: integer
+          description: Lowest (best) rank seen across all engines.
+          example: 1
+        score:
+          type: number
+          format: float
+          description: 'Cross-engine agreement score: sum(1/rank for each occurrence) / engines_queried, capped at 1.0. Higher is better.
+
+            '
+          example: 0.92
+    EngineErrorDetail:
+      type: object
+      required:
+      - engine
+      - error
+      properties:
+        engine:
+          type: string
+          example: bing
+        error:
+          type: string
+          example: blocked
+        message:
+          type: string
+          description: Sanitized detail; proxy credentials are never included.
+          example: 'blocked: 403'
+    ImageResult:
+      type: object
+      required:
+      - id
+      - rank
+      - type
+      - title
+      - image
+      - source
+      - engine
+      properties:
+        id:
+          type: string
+          description: Stable identifier prefixed with `i_`.
+          example: i_a1b2c3d4e5f6a1b2
+        rank:
+          type: integer
+          example: 1
+        type:
+          type: string
+          enum:
+          - image
+        title:
+          type: string
+        image:
+          $ref: '#/components/schemas/ImageData'
+        source:
+          $ref: '#/components/schemas/ImageSource'
+        engine:
+          type: string
+    ImageSource:
+      type: object
+      required:
+      - page_url
+      - domain
+      properties:
+        page_url:
+          type: string
+          example: https://example.com/article-about-gophers
+        domain:
+          type: string
+          example: example.com
+    Result:
+      type: object
+      required:
+      - id
+      - rank
+      - type
+      - title
+      - url
+      - display_url
+      - snippet
+      - domain
+      - favicon
+      - position
+      - engine
+      properties:
+        id:
+          type: string
+          description: 'Stable identifier: `s_` + hex(first 8 bytes of MD5(engine|normalized_url)). Normalized URL: lowercase scheme+host, trailing slash stripped, utm_*/fbclid/gclid tracking params removed. Same URL → same ID across requests.
+
+            '
+          example: s_a1b2c3d4e5f6a1b2
+        rank:
+          type: integer
+          example: 1
+        type:
+          $ref: '#/components/schemas/ResultType'
+        title:
+          type: string
+          example: The Go Programming Language
+        url:
+          type: string
+          example: https://go.dev/
+        display_url:
+          type: string
+          description: Breadcrumb form of the URL (e.g. `go.dev › doc › install`).
+          example: go.dev
+        snippet:
+          type: string
+          example: Go is an open source programming language...
+        domain:
+          type: string
+          description: Registrable domain with leading `www.` stripped.
+          example: go.dev
+        favicon:
+          type: string
+          description: Constructed as `https://{domain}/favicon.ico`. Not probed.
+          example: https://go.dev/favicon.ico
+        position:
+          $ref: '#/components/schemas/Position'
+        engine:
+          type: string
+          example: google
+        domain_info:
+          $ref: '#/components/schemas/DomainInfo'
+        classification:
+          $ref: '#/components/schemas/Classification'
+        extracted:
+          $ref: '#/components/schemas/ExtractedContent'
+    Position:
+      type: object
+      required:
+      - absolute
+      properties:
+        absolute:
+          type: integer
+          description: '1-based rank in the mixed SERP stream, across both organic and ad blocks. Always present so SEO callers can plot rank vs. on-page position without inferring it from result order.
+
+            '
+          example: 2
+    ExtractedContent:
+      type: object
+      description: 'One enriched target page. `content` holds a single representation chosen by the response `format` (plain text for `format=text`, markdown otherwise), named by `format`. No duplicated markdown/text blobs.
+
+        '
+      properties:
+        title:
+          type: string
+        format:
+          type: string
+          enum:
+          - markdown
+          - text
+        content:
+          type: string
+        mode_used:
+          type: string
+          enum:
+          - fast
+          - rendered
+          - llms_txt
+        fetched_at:
+          type: string
+          format: date-time
+        error:
+          type: string
+    FeatureItem:
+      type: object
+      properties:
+        title:
+          type: string
+          example: What is OpenSERP?
+        text:
+          type: string
+          example: OpenSERP is an open-source SERP API.
+        link:
+          type: string
+          example: https://openserp.org/
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      - code
+      properties:
+        error:
+          type: string
+          description: 'Stable machine-readable error class. Search-pipeline failures use the following codes: `captcha_detected`, `blocked`, `search_timeout`, `proxy_connect`, `proxy_auth`, `proxy_timeout`, `proxy_unavailable`, `parser_failure`, `engine_internal`, `all_engines_failed`, `circuit_open`, `request_timeout`, `request_canceled`. Validation errors use `bad_request`. Other generic codes (`not_found`, `rate_limited`, `service_unavailable`, `server_error`, `client_error`, `error`) may appear for non-search routes.
+
+            '
+          enum:
+          - bad_request
+          - not_found
+          - rate_limited
+          - service_unavailable
+          - server_error
+          - client_error
+          - error
+          - captcha_detected
+          - blocked
+          - search_timeout
+          - proxy_connect
+          - proxy_auth
+          - proxy_timeout
+          - proxy_unavailable
+          - parser_failure
+          - engine_internal
+          - all_engines_failed
+          - circuit_open
+          - request_timeout
+          - request_canceled
+          example: bad_request
+        code:
+          type: integer
+          example: 400
+        request_id:
+          type: string
+          description: Matches the `X-Request-ID` response header.
+          example: 01HXYZ...
+        message:
+          type: string
+          example: 'INVALID_LIMIT: limit must be between 1 and 100'
+        reason:
+          type: string
+          description: 'Stable client-actionable reason code. Present on 400 errors. Known values: INVALID_LIMIT, INVALID_START, INVALID_PARAM, EMPTY_QUERY, NO_ENGINES, UNKNOWN_FORMAT, REQUEST_PROXY_URL_DISABLED, UNSUPPORTED_PROXY_SCHEME.
+
+            '
+          example: INVALID_LIMIT
+        meta:
+          type: object
+          description: 'Sanitized context for search-pipeline errors. Credentials are never included.
+
+            '
+          additionalProperties: true
+          properties:
+            engine:
+              type: string
+              example: google
+            proxy_used:
+              type: string
+              description: Masked `scheme://host:port`; never includes credentials.
+              example: http://proxy.example:8080
+            proxy_country:
+              type: string
+              example: us
+            proxy_class:
+              type: string
+              example: residential
+            proxy_provider:
+              type: string
+              example: webshare
+            proxy_session_id:
+              type: string
+              example: sid-123
+            error_detail:
+              type: string
+              description: Sanitized underlying error detail when available.
+              example: 'proxy_connect: dial tcp proxy.example:8080: connection refused'
+            engine_errors:
+              type: array
+              items:
+                $ref: '#/components/schemas/EngineErrorDetail'
+    ResponseMeta:
+      type: object
+      required:
+      - request_id
+      - requested_at
+      - took_ms
+      - engines_failed
+      - version
+      properties:
+        request_id:
+          type: string
+          example: 01HXYZ...
+        requested_at:
+          type: string
+          format: date-time
+          example: '2026-04-24T12:00:00Z'
+        took_ms:
+          type: integer
+          example: 842
+        engines_failed:
+          type: array
+          items:
+            type: string
+          example: []
+        engine_errors:
+          type: array
+          description: Sanitized per-engine failures for mega endpoints.
+          items:
+            $ref: '#/components/schemas/EngineErrorDetail'
+        version:
+          type: string
+          example: '2.1'
+    DomainInfo:
+      type: object
+      required:
+      - category
+      properties:
+        tld:
+          type: string
+          example: org
+        sld:
+          type: string
+          example: wikipedia
+        category:
+          type: string
+          description: Empty string when the domain matches no known category.
+          enum:
+          - ''
+          - gov
+          - edu
+          - mil
+          - news
+          - forum
+          - marketplace
+          - social
+    SearchEnvelope:
+      type: object
+      required:
+      - query
+      - meta
+      - results
+      - serp_features
+      - pagination
+      properties:
+        query:
+          $ref: '#/components/schemas/QueryEcho'
+        meta:
+          $ref: '#/components/schemas/ResponseMeta'
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        serp_features:
+          type: array
+          description: 'Non-organic SERP modules such as AI summaries, answer boxes, related questions, related searches, and knowledge panels.
+
+            '
+          items:
+            $ref: '#/components/schemas/SerpFeature'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+  responses:
+    ForbiddenError:
+      description: The search engine blocked the request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            blocked:
+              value:
+                error: blocked
+                code: 403
+                message: search engine blocked the request
+                meta:
+                  engine: google
+                  proxy_used: http://proxy.example:8080
+                  proxy_country: us
+                  proxy_class: residential
+                  proxy_provider: webshare
+                  proxy_session_id: sid-123
+    TooManyRequestsError:
+      description: Captcha challenge or rate-limit response from the search engine
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            captcha:
+              value:
+                error: captcha_detected
+                code: 429
+                message: captcha detected
+                meta:
+                  engine: google
+                  proxy_used: http://proxy.example:8080
+                  proxy_session_id: sid-123
+            upstreamBlocked:
+              value:
+                error: blocked
+                code: 429
+                message: search engine blocked the request (HTTP 429)
+                meta:
+                  engine: google
+                  proxy_used: http://proxy.example:8080
+                  upstream_status: 429
+    ServiceUnavailableError:
+      description: Proxy-layer failure (no healthy proxy or transport error). The search itself was not produced.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            proxyConnect:
+              value:
+                error: proxy_connect
+                code: 503
+                message: proxy connection failed
+                meta:
+                  engine: google
+                  proxy_used: http://proxy.example:8080
+                  proxy_country: us
+            proxyAuth:
+              value:
+                error: proxy_auth
+                code: 503
+                message: proxy authentication failed
+                meta:
+                  engine: google
+                  proxy_used: http://proxy.example:8080
+            proxyTimeout:
+              value:
+                error: proxy_timeout
+                code: 503
+                message: proxy request timed out
+                meta:
+                  engine: google
+                  proxy_used: http://proxy.example:8080
+            proxyUnavailable:
+              value:
+                error: proxy_unavailable
+                code: 503
+                message: proxy unavailable
+                meta:
+                  engine: google
+    InternalServerError:
+      description: Internal error while handling request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequestError:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            invalidLimit:
+              value:
+                error: bad_request
+                code: 400
+                message: 'INVALID_LIMIT: limit must be between 1 and 100'
+                reason: INVALID_LIMIT
+            emptyQuery:
+              value:
+                error: bad_request
+                code: 400
+                message: 'EMPTY_QUERY: query cannot be empty'
+                reason: EMPTY_QUERY
+            requestProxyURLDisabled:
+              value:
+                error: bad_request
+                code: 400
+                message: 'REQUEST_PROXY_URL_DISABLED: X-Proxy-URL is disabled by server configuration'
+                reason: REQUEST_PROXY_URL_DISABLED
+            unsupportedProxyScheme:
+              value:
+                error: bad_request
+                code: 400
+                message: 'UNSUPPORTED_PROXY_SCHEME: authenticated SOCKS proxies are not supported in browser mode'
+                reason: UNSUPPORTED_PROXY_SCHEME
+    BadGatewayError:
+      description: Engine internal failure, parser drift, or all-engine failure when fallback is enabled.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            parserFailure:
+              value:
+                error: parser_failure
+                code: 502
+                message: parser failure
+                meta:
+                  engine: google
+            engineInternal:
+              value:
+                error: engine_internal
+                code: 502
+                message: engine internal error
+                meta:
+                  engine: google
+            allEnginesFailed:
+              value:
+                error: engine_internal
+                code: 502
+                message: all search engines failed
+                meta:
+                  engine: google
+    GatewayTimeoutError:
+      description: Search timed out waiting for required SERP elements
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            searchTimeout:
+              value:
+                error: search_timeout
+                code: 504
+                message: timeout. Cannot find element on page
+                meta:
+                  engine: google

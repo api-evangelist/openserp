@@ -1,0 +1,290 @@
+openapi: 3.2.0
+info:
+  title: OpenSERP Stats API
+  version: 2.2.0
+  description: 'OpenSERP provides dedicated and multi-engine search endpoints for Google, Yandex, Baidu, Bing, and DuckDuckGo. Search responses are wrapped in a v2 envelope with query echo, metadata, normalized results, and pagination. Invalid client input returns 400 with a machine-readable `reason` code.
+
+    '
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+- url: http://127.0.0.1:7000
+  description: Local default server
+security: []
+tags:
+- name: Stats
+  description: Runtime statistics endpoints
+paths:
+  /stats:
+    get:
+      tags:
+      - Stats
+      operationId: getStats
+      summary: Combined cache, proxy, and circuit-breaker stats
+      responses:
+        '200':
+          description: Runtime statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatsResponse'
+  /stats/cache:
+    get:
+      tags:
+      - Stats
+      operationId: getCacheStats
+      summary: Cache statistics only
+      responses:
+        '200':
+          description: Cache status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CacheStats'
+  /stats/proxy:
+    get:
+      tags:
+      - Stats
+      operationId: getProxyStats
+      summary: Proxy pool and per-engine proxy policy statistics
+      responses:
+        '200':
+          description: Proxy stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProxyStats'
+  /stats/cb:
+    get:
+      tags:
+      - Stats
+      operationId: getCircuitBreakerStats
+      summary: Circuit breaker state per engine
+      responses:
+        '200':
+          description: Circuit breaker stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CircuitBreakerStatsResponse'
+components:
+  schemas:
+    LaneStats:
+      type: object
+      required:
+      - active
+      - evicted_lru
+      - cookies_dropped
+      description: Sticky proxy lane state observed by this worker.
+      properties:
+        active:
+          type: integer
+          description: Number of lanes currently held by the worker.
+          example: 12
+        evicted_lru:
+          type: integer
+          description: Lanes evicted by the LRU bound since worker start.
+          example: 7
+        cookies_dropped:
+          type: integer
+          description: Lane cookie drops triggered by captcha/challenge responses.
+          example: 20
+    CircuitBreakerStatsResponse:
+      type: object
+      required:
+      - circuit_breakers
+      properties:
+        circuit_breakers:
+          type: array
+          items:
+            $ref: '#/components/schemas/CircuitBreakerStat'
+    CacheStatsDisabled:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: boolean
+          enum:
+          - false
+    ProxyStats:
+      type: object
+      required:
+      - configured_count
+      - healthy_count
+      - unhealthy_count
+      - request_proxy_url_enabled
+      - lanes
+      - browser_processes
+      - tags
+      - entries
+      properties:
+        configured_count:
+          type: integer
+        healthy_count:
+          type: integer
+        unhealthy_count:
+          type: integer
+        request_proxy_url_enabled:
+          type: boolean
+          description: Whether `proxies.allow_request_proxy_url` is enabled on this worker.
+        lanes:
+          $ref: '#/components/schemas/LaneStats'
+        browser_processes:
+          $ref: '#/components/schemas/BrowserPoolStats'
+        tags:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ProxyTagSummary'
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProxyStatsEntry'
+        engines:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ProxyEngineStats'
+    ProxyEngineStats:
+      type: object
+      required:
+      - selected_proxy
+      properties:
+        tag:
+          type: string
+        selected_proxy:
+          type: string
+    ProxyTagSummary:
+      type: object
+      required:
+      - configured
+      - healthy
+      properties:
+        configured:
+          type: integer
+        healthy:
+          type: integer
+    StatsResponse:
+      type: object
+      required:
+      - cache
+      - proxy
+      - circuit_breakers
+      properties:
+        cache:
+          $ref: '#/components/schemas/CacheStats'
+        proxy:
+          $ref: '#/components/schemas/ProxyStats'
+        circuit_breakers:
+          type: array
+          items:
+            $ref: '#/components/schemas/CircuitBreakerStat'
+    CacheStatsEnabled:
+      type: object
+      required:
+      - status
+      - entries
+      - hits
+      - misses
+      - bypasses
+      - evictions
+      - ttl_seconds
+      - max_size
+      properties:
+        status:
+          type: boolean
+          enum:
+          - true
+        entries:
+          type: integer
+        hits:
+          type: integer
+        misses:
+          type: integer
+        bypasses:
+          type: integer
+        evictions:
+          type: integer
+        ttl_seconds:
+          type: integer
+        max_size:
+          type: integer
+    CacheStats:
+      oneOf:
+      - $ref: '#/components/schemas/CacheStatsEnabled'
+      - $ref: '#/components/schemas/CacheStatsDisabled'
+    CircuitBreakerStat:
+      type: object
+      required:
+      - engine
+      - state
+      - failure_count
+      - last_changed
+      properties:
+        engine:
+          type: string
+        state:
+          type: string
+          enum:
+          - closed
+          - open
+          - half-open
+        failure_count:
+          type: integer
+        last_changed:
+          type: string
+          format: date-time
+        retry_in:
+          type: integer
+          description: Seconds until next half-open attempt (present when state is open).
+        avg_response_ms:
+          type: integer
+          description: Average successful engine response time in milliseconds.
+    ProxyStatsEntry:
+      type: object
+      required:
+      - proxy
+      - tags
+      - healthy
+      - failures
+      - disabled
+      properties:
+        proxy:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        healthy:
+          type: boolean
+        failures:
+          type: integer
+        disabled:
+          type: boolean
+    BrowserPoolStats:
+      type: object
+      required:
+      - active
+      - max
+      - evicted_lru
+      - evicted_idle
+      description: 'Live state of the per-process Chrome pool. Each authenticated upstream proxy identity (scheme+host+port+username) gets a dedicated Chrome so Chrome can answer 407 challenges natively. Direct and unauthenticated proxies share one Chrome with per-BrowserContext proxy override.
+
+        '
+      properties:
+        active:
+          type: integer
+          description: Number of Chrome processes currently held by the pool.
+          example: 3
+        max:
+          type: integer
+          description: Configured `app.max_processes` LRU cap.
+          example: 4
+        evicted_lru:
+          type: integer
+          description: Chrome processes closed because the LRU cap was exceeded.
+          example: 12
+        evicted_idle:
+          type: integer
+          description: Chrome processes closed by the idle sweeper after `app.idle_ttl`.
+          example: 5
