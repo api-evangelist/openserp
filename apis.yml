@@ -4,11 +4,11 @@ description: OpenSERP is an open-source, self-hostable SERP API that returns str
   from Google, Bing, Yandex, Baidu, DuckDuckGo and Ecosia through one REST interface, alongside OpenSERP
   Cloud, a managed pay-as-you-go version of the same API adding page extraction, multi-engine megasearch,
   image search and scheduled rank monitoring. The self-hosted server ships an MIT-licensed Go binary and
-  CLI with a published OpenAPI 3.0.3 contract, a v2 response envelope carrying query echo, metadata,
-  normalized results and pagination, plus cache, proxy-pool and circuit-breaker telemetry endpoints.
-  OpenSERP Cloud adds bearer-token authentication, credit-metered billing, engine health routing, batch
-  URL extraction and Search Monitor webhooks, and the project publishes first-party JavaScript and Python
-  SDKs, an MCP server and an n8n community node.
+  CLI with a published OpenAPI 3.0.3 contract, a v2 response envelope carrying query echo, metadata, normalized
+  results and pagination, plus cache, proxy-pool and circuit-breaker telemetry endpoints. OpenSERP Cloud
+  adds bearer-token authentication, credit-metered billing, engine health routing, batch URL extraction
+  and Search Monitor webhooks, and the project publishes first-party JavaScript and Python SDKs, an MCP
+  server and an n8n community node.
 url: https://raw.githubusercontent.com/api-evangelist/openserp/refs/heads/main/apis.yml
 deliveryModel:
   model: open-core
@@ -72,10 +72,9 @@ tags_raw:
 - Open Source
 - Developer Tools
 apis:
-- aid: openserp-cloud
+- aid: openserp:openserp-cloud
   name: OpenSERP Cloud API
-  description: >-
-    The managed, hosted version of the OpenSERP search API. Bearer-token authenticated, credit-metered
+  description: The managed, hosted version of the OpenSERP search API. Bearer-token authenticated, credit-metered
     pay-as-you-go REST API exposing single-engine web and image search across Google, Bing, Yandex, Baidu,
     DuckDuckGo and Ecosia, multi-engine megasearch with balanced/any/fast execution modes, single and
     batch URL extraction, account balance and live per-operation pricing.
