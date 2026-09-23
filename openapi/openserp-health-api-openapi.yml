@@ -2,9 +2,7 @@ openapi: 3.2.0
 info:
   title: OpenSERP Health API
   version: 2.2.0
-  description: 'OpenSERP provides dedicated and multi-engine search endpoints for Google, Yandex, Baidu, Bing, and DuckDuckGo. Search responses are wrapped in a v2 envelope with query echo, metadata, normalized results, and pagination. Invalid client input returns 400 with a machine-readable `reason` code.
-
-    '
+  description: OpenSERP provides dedicated and multi-engine search endpoints for Google, Yandex, Baidu, Bing, and DuckDuckGo. Search responses are wrapped in a v2 envelope with query echo, metadata, normalized results, and pagination. Invalid client input returns 400 with a machine-readable `reason` code.
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -56,6 +54,16 @@ paths:
                 $ref: '#/components/schemas/ReadinessStatus'
 components:
   schemas:
+    ReadinessStatus:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - ready
+          - draining
     HealthStatus:
       type: object
       required:
@@ -99,13 +107,3 @@ components:
           - ready
           - not_initialized
           - circuit_open
-    ReadinessStatus:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          type: string
-          enum:
-          - ready
-          - draining

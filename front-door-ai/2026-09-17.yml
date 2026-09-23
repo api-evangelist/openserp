@@ -1,0 +1,31 @@
+# Front Door AI Index — openserp — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: openserp
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: openserp.org
+  final_host: openserp.org
+  ownership: own
+  owner: openserp
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 20
+  host_score: 20
+  density: 18.78
+  words: 1065
+  tiers:
+    agentic: 4
+    core: 16
+    model: 0
+  ambiguous: 3
+  top_terms:
+    AI: 14
+    LLMs: 2
+    RAG: 2
+    agent: 2
+    AI agent: 1
+    MCP: 1
+    automation: 1

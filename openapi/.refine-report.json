@@ -1,0 +1,28 @@
+{
+  "provider": "openserp",
+  "sources": [
+    "_original/openserp-oss-openapi.yml"
+  ],
+  "outputs": [
+    "openserp-docs-api-openapi.yml",
+    "openserp-health-api-openapi.yml",
+    "openserp-mega-api-openapi.yml",
+    "openserp-search-api-openapi.yml",
+    "openserp-stats-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "openserp-oss-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "openserp-docs-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "openserp-health-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "openserp-mega-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "openserp-search-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "openserp-stats-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
