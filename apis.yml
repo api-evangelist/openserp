@@ -58,7 +58,7 @@ tags:
 - Content Extraction
 - AI Grounding
 - Rank Tracking
-- Open-Source
+- Open Source
 - Developer Tools
 tags_raw:
 - Company
@@ -71,6 +71,7 @@ tags_raw:
 - Rank Tracking
 - Open Source
 - Developer Tools
+- Open-Source
 apis:
 - aid: openserp:openserp-cloud
   name: OpenSERP Cloud API

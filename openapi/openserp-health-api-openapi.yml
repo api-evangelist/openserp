@@ -64,6 +64,25 @@ components:
           enum:
           - ready
           - draining
+    EngineHealth:
+      type: object
+      required:
+      - name
+      - initialized
+      - status
+      properties:
+        name:
+          type: string
+          example: google
+        initialized:
+          type: boolean
+          example: true
+        status:
+          type: string
+          enum:
+          - ready
+          - not_initialized
+          - circuit_open
     HealthStatus:
       type: object
       required:
@@ -88,22 +107,3 @@ components:
         system:
           type: object
           additionalProperties: true
-    EngineHealth:
-      type: object
-      required:
-      - name
-      - initialized
-      - status
-      properties:
-        name:
-          type: string
-          example: google
-        initialized:
-          type: boolean
-          example: true
-        status:
-          type: string
-          enum:
-          - ready
-          - not_initialized
-          - circuit_open
