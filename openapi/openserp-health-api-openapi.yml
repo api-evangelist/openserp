@@ -54,16 +54,6 @@ paths:
                 $ref: '#/components/schemas/ReadinessStatus'
 components:
   schemas:
-    ReadinessStatus:
-      type: object
-      required:
-      - status
-      properties:
-        status:
-          type: string
-          enum:
-          - ready
-          - draining
     EngineHealth:
       type: object
       required:
@@ -83,6 +73,16 @@ components:
           - ready
           - not_initialized
           - circuit_open
+    ReadinessStatus:
+      type: object
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          enum:
+          - ready
+          - draining
     HealthStatus:
       type: object
       required:
