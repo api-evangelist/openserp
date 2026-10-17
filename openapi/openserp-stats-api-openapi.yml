@@ -68,6 +68,21 @@ paths:
                 $ref: '#/components/schemas/CircuitBreakerStatsResponse'
 components:
   schemas:
+    StatsResponse:
+      type: object
+      required:
+      - cache
+      - proxy
+      - circuit_breakers
+      properties:
+        cache:
+          $ref: '#/components/schemas/CacheStats'
+        proxy:
+          $ref: '#/components/schemas/ProxyStats'
+        circuit_breakers:
+          type: array
+          items:
+            $ref: '#/components/schemas/CircuitBreakerStat'
     ProxyTagSummary:
       type: object
       required:
@@ -78,10 +93,26 @@ components:
           type: integer
         healthy:
           type: integer
-    CacheStats:
-      oneOf:
-      - $ref: '#/components/schemas/CacheStatsEnabled'
-      - $ref: '#/components/schemas/CacheStatsDisabled'
+    LaneStats:
+      type: object
+      required:
+      - active
+      - evicted_lru
+      - cookies_dropped
+      description: Sticky proxy lane state observed by this worker.
+      properties:
+        active:
+          type: integer
+          description: Number of lanes currently held by the worker.
+          example: 12
+        evicted_lru:
+          type: integer
+          description: Lanes evicted by the LRU bound since worker start.
+          example: 7
+        cookies_dropped:
+          type: integer
+          description: Lane cookie drops triggered by captcha/challenge responses.
+          example: 20
     CircuitBreakerStat:
       type: object
       required:
@@ -109,15 +140,40 @@ components:
         avg_response_ms:
           type: integer
           description: Average successful engine response time in milliseconds.
-    ProxyEngineStats:
+    CacheStatsDisabled:
       type: object
       required:
-      - selected_proxy
+      - status
       properties:
-        tag:
+        status:
+          type: boolean
+          enum:
+          - false
+    ProxyStatsEntry:
+      type: object
+      required:
+      - proxy
+      - tags
+      - healthy
+      - failures
+      - disabled
+      properties:
+        proxy:
           type: string
-        selected_proxy:
-          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        healthy:
+          type: boolean
+        failures:
+          type: integer
+        disabled:
+          type: boolean
+    CacheStats:
+      oneOf:
+      - $ref: '#/components/schemas/CacheStatsEnabled'
+      - $ref: '#/components/schemas/CacheStatsDisabled'
     ProxyStats:
       type: object
       required:
@@ -155,36 +211,51 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/ProxyEngineStats'
-    CacheStatsDisabled:
+    CircuitBreakerStatsResponse:
       type: object
       required:
-      - status
+      - circuit_breakers
       properties:
-        status:
-          type: boolean
-          enum:
-          - false
-    ProxyStatsEntry:
-      type: object
-      required:
-      - proxy
-      - tags
-      - healthy
-      - failures
-      - disabled
-      properties:
-        proxy:
-          type: string
-        tags:
+        circuit_breakers:
           type: array
           items:
-            type: string
-        healthy:
-          type: boolean
-        failures:
+            $ref: '#/components/schemas/CircuitBreakerStat'
+    ProxyEngineStats:
+      type: object
+      required:
+      - selected_proxy
+      properties:
+        tag:
+          type: string
+        selected_proxy:
+          type: string
+    BrowserPoolStats:
+      type: object
+      required:
+      - active
+      - max
+      - evicted_lru
+      - evicted_idle
+      description: 'Live state of the per-process Chrome pool. Each authenticated upstream proxy identity (scheme+host+port+username) gets a dedicated Chrome so Chrome can answer 407 challenges natively. Direct and unauthenticated proxies share one Chrome with per-BrowserContext proxy override.
+
+        '
+      properties:
+        active:
           type: integer
-        disabled:
-          type: boolean
+          description: Number of Chrome processes currently held by the pool.
+          example: 3
+        max:
+          type: integer
+          description: Configured `app.max_processes` LRU cap.
+          example: 4
+        evicted_lru:
+          type: integer
+          description: Chrome processes closed because the LRU cap was exceeded.
+          example: 12
+        evicted_idle:
+          type: integer
+          description: Chrome processes closed by the idle sweeper after `app.idle_ttl`.
+          example: 5
     CacheStatsEnabled:
       type: object
       required:
@@ -215,74 +286,3 @@ components:
           type: integer
         max_size:
           type: integer
-    BrowserPoolStats:
-      type: object
-      required:
-      - active
-      - max
-      - evicted_lru
-      - evicted_idle
-      description: 'Live state of the per-process Chrome pool. Each authenticated upstream proxy identity (scheme+host+port+username) gets a dedicated Chrome so Chrome can answer 407 challenges natively. Direct and unauthenticated proxies share one Chrome with per-BrowserContext proxy override.
-
-        '
-      properties:
-        active:
-          type: integer
-          description: Number of Chrome processes currently held by the pool.
-          example: 3
-        max:
-          type: integer
-          description: Configured `app.max_processes` LRU cap.
-          example: 4
-        evicted_lru:
-          type: integer
-          description: Chrome processes closed because the LRU cap was exceeded.
-          example: 12
-        evicted_idle:
-          type: integer
-          description: Chrome processes closed by the idle sweeper after `app.idle_ttl`.
-          example: 5
-    CircuitBreakerStatsResponse:
-      type: object
-      required:
-      - circuit_breakers
-      properties:
-        circuit_breakers:
-          type: array
-          items:
-            $ref: '#/components/schemas/CircuitBreakerStat'
-    LaneStats:
-      type: object
-      required:
-      - active
-      - evicted_lru
-      - cookies_dropped
-      description: Sticky proxy lane state observed by this worker.
-      properties:
-        active:
-          type: integer
-          description: Number of lanes currently held by the worker.
-          example: 12
-        evicted_lru:
-          type: integer
-          description: Lanes evicted by the LRU bound since worker start.
-          example: 7
-        cookies_dropped:
-          type: integer
-          description: Lane cookie drops triggered by captcha/challenge responses.
-          example: 20
-    StatsResponse:
-      type: object
-      required:
-      - cache
-      - proxy
-      - circuit_breakers
-      properties:
-        cache:
-          $ref: '#/components/schemas/CacheStats'
-        proxy:
-          $ref: '#/components/schemas/ProxyStats'
-        circuit_breakers:
-          type: array
-          items:
-            $ref: '#/components/schemas/CircuitBreakerStat'
